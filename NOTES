@@ -1,0 +1,5 @@
+Root Folder System
+src    - Main Folder for bbs source code
+system - Data and System Files for the bbs
+
+Any Extended source libraries will be inside of source so libs can be access easily during build.
