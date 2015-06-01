@@ -51,7 +51,6 @@
 namespace common
 {
 
-
 /* This function will read the OS specific functions
  * To Determine where the executable is located.
  * This has only been tested in Windows, Linux, OSX.
@@ -155,7 +154,6 @@ std::string GetSystemHomeDirectory()
 
     return home_directory;
 }
-
 
 /**
  * String Lengh counting actual characters not bytes
@@ -284,7 +282,6 @@ std::string Trim(const std::string &str)
     }
     return LeftTrim(RightTrim(new_string));
 }
-
 
 /**
  * UTF-8 Aware
@@ -620,6 +617,5 @@ bool IsDigit(const std::string &str)
     }
     return is_digit;
 }
-
 
 }

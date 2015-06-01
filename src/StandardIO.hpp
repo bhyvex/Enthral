@@ -36,11 +36,10 @@ protected:
 
 private:
 
-    int term_reset_;
-    int term_echo_;
-    int term_canonical_;
-
-    struct termios terminal_attributes_;
+    int m_term_reset;
+    int m_term_echo;
+    int m_term_canonical;
+    struct termios m_terminal_attributes;
 
 public:
 

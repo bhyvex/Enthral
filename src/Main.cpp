@@ -196,14 +196,14 @@ int main(int argc, char *argv[])
     if(argc >= 3)
     {
         // Passed from Xinetd
-        session.ip_address_ = argv[1];
-        session.ip_hostname_ = argv[2];
+        session.m_ip_address = argv[1];
+        session.m_ip_hostname = argv[2];
     }
     else
     {
         // Local Console
-        session.ip_address_ = "127.0.0.1";
-        session.ip_hostname_ = "Localhost";
+        session.m_ip_address = "127.0.0.1";
+        session.m_ip_hostname = "Localhost";
     }
 
     // Check Terminal Type
@@ -220,7 +220,7 @@ int main(int argc, char *argv[])
             // Not getting here.
             if(!in_stream.eof())
             {
-                getline(in_stream, session.terminal_type_);
+                getline(in_stream, session.m_terminal_type);
             }
             in_stream.close();
         }
@@ -228,7 +228,7 @@ int main(int argc, char *argv[])
         {
             //std::cout << "Enable to Read term File" << std::endl;
             if (const char* env_p = std::getenv((char *)"TERM"))
-                session.terminal_type_ = env_p;
+                session.m_terminal_type = env_p;
         }
     }
     else
@@ -236,7 +236,7 @@ int main(int argc, char *argv[])
         // Local Terminals
         //std::cout << "Getting local-term" << std::endl;
         if (const char* env_p = std::getenv((char *)"TERM"))
-            session.terminal_type_ = env_p;
+            session.m_terminal_type = env_p;
     }
 
 
@@ -300,26 +300,26 @@ int main(int argc, char *argv[])
         std::cout << "Exception, Unable to locate executable path!" << std::endl;
         exit(1);
     }
-    session.program_path_ = path;
+    session.m_program_path = path;
 
     // Get BBS Users Home Directory
     std::cout << std::endl << "Initial Session Variables" << std::endl;
     std::cout << "=========================" << std::endl;
 
-    session.home_directory_ = common::GetSystemHomeDirectory();
-    session.home_directory_ += '/'; // Append Forward Slash.
-    std::cout << "HOME: " << session.home_directory_ << std::endl;
+    session.m_home_directory = common::GetSystemHomeDirectory();
+    session.m_home_directory += '/'; // Append Forward Slash.
+    std::cout << "HOME: " << session.m_home_directory << std::endl;
 
 // Debug Settings.
-    std::cout << "ip address: "  << session.ip_address_ << std::endl;
-    std::cout << "hostname: "    << session.ip_hostname_ << std::endl;
+    std::cout << "ip address: "  << session.m_ip_address << std::endl;
+    std::cout << "hostname: "    << session.m_ip_hostname << std::endl;
     std::cout << "path: "        << path << std::endl;
-    std::cout << "term: "        << session.terminal_type_ << std::endl;
-    std::cout << "term width: "  << session.terminal_width_ << std::endl;
-    std::cout << "term height: " << session.terminal_height_ << std::endl;
+    std::cout << "term: "        << session.m_terminal_type << std::endl;
+    std::cout << "term width: "  << session.m_terminal_width << std::endl;
+    std::cout << "term height: " << session.m_terminal_height << std::endl;
 
     std::cout << "Session Start: "
-              << std::asctime(std::localtime(&session.session_start_))
+              << std::asctime(std::localtime(&session.m_session_start))
               << std::endl;
 
 

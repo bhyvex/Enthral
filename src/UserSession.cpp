@@ -22,23 +22,21 @@
 #include <pty.h>     // Struct Winsize
 
 UserSession::UserSession() :
-    is_session_active_(true),
-    is_session_logged_in_(false),
-    is_newuser_(false),
-    node_number_(0),
-    terminal_width_(80),
-    terminal_height_(24),
-    prelogin_timeout_in_minutes_(2),
-    system_timeout_in_minutes_(0),
-    session_start_(std::time(nullptr)),
-    is_timeout_warning_(false),
-    start_timeout_(0)
-{
-}
+    m_is_session_active(true),
+    m_is_session_logged_in(false),
+    m_is_newuser(false),
+    m_node_number(0),
+    m_terminal_width(80),
+    m_terminal_height(24),
+    m_prelogin_timeout_in_minutes(2),
+    m_system_timeout_in_minutes(0),
+    m_session_start(std::time(nullptr)),
+    m_is_timeout_warning(false),
+    m_start_timeout(0)
+{ }
 
 UserSession::~UserSession()
-{
-}
+{ }
 
 /*
  * Check for Window Terminal Size Changes
@@ -46,13 +44,12 @@ UserSession::~UserSession()
 void UserSession::CheckTerminalSize()
 {
     struct winsize window_size;
-
     if(ioctl(STDIN_FILENO, TIOCGWINSZ, &window_size) >= 0 &&
             window_size.ws_row > 0 &&
             window_size.ws_col > 0)
     {
-        terminal_height_ = window_size.ws_row;
-        terminal_width_ = window_size.ws_col;
+        m_terminal_height = window_size.ws_row;
+        m_terminal_width = window_size.ws_col;
     }
 }
 
@@ -66,10 +63,10 @@ bool UserSession::InputTimeout()
     int  timed_out_minutes = 0;
 
     // Setup which Time-out to use.
-    if (is_session_logged_in_)
-        timed_out_minutes = system_timeout_in_minutes_;
+    if (m_is_session_logged_in)
+        timed_out_minutes = m_system_timeout_in_minutes;
     else
-        timed_out_minutes = prelogin_timeout_in_minutes_;
+        timed_out_minutes = m_prelogin_timeout_in_minutes;
 
     // No timeout set, then return
     if (timed_out_minutes == 0)
@@ -78,9 +75,9 @@ bool UserSession::InputTimeout()
     std::time_t  current_time;
     current_time = time(0);
 
-    if ( start_timeout_ != (std::time_t)(-1) && current_time != (std::time_t)(-1) )
+    if ( m_start_timeout != (std::time_t)(-1) && current_time != (std::time_t)(-1) )
     {
-        time_difference = std::difftime(current_time,start_timeout_); /// (60 * 60 * 24);
+        time_difference = std::difftime(current_time,m_start_timeout); /// (60 * 60 * 24);
         minutes_passed = (int)(time_difference / 60);
     }
 
@@ -93,14 +90,14 @@ bool UserSession::InputTimeout()
     {
         // Timeout Reset we received activity, as Long as time
         // Is below the warning threshold, we'll keep this false.
-        is_timeout_warning_ = false;
+        m_is_timeout_warning = false;
     }
     // Give a Timeout Warning with 1 minute left.
     else if (minutes_passed >= (timed_out_minutes - 1)
-             && is_timeout_warning_ == false)
+             && m_is_timeout_warning == false)
     {
         // Send only 1 Timeout Warning.
-        is_timeout_warning_ = true;
+        m_is_timeout_warning = true;
 
         // Craft Message Here for Timeout Warning. From Language File!
         std::cout << "Warning, System Timeout approaching: 1 Minute Left." << std::endl;
@@ -114,7 +111,7 @@ bool UserSession::InputTimeout()
  */
 std::string UserSession::GetEscapeSequence()
 {
-    return escape_sequence_;
+    return m_escape_sequence;
 }
 
 /**
@@ -135,7 +132,7 @@ std::string UserSession::GetInput()
     bool is_system_timed_out = false;
 
     // Start Timeout counter
-    start_timeout_ = time(0);
+    m_start_timeout = time(0);
 
     while (1)
     {
@@ -152,7 +149,7 @@ std::string UserSession::GetInput()
             std::cout << "Warning, System Timeout reached!" << std::endl;
 
             // Reset time for now, this is testing.
-            start_timeout_ = time(0);
+            m_start_timeout = time(0);
         }
 
         // Check STDIO (Non-blocking!) for input.
@@ -162,7 +159,7 @@ std::string UserSession::GetInput()
             character_buffer = io.ReadConsoleTTY();
 
             // Reset Timeout Counter on Input.
-            start_timeout_ = time(0);
+            m_start_timeout = time(0);
 
             // Invalid Data, Then start loop again.
             if (character_buffer.empty())
@@ -177,14 +174,14 @@ std::string UserSession::GetInput()
                 if (!is_escape_sequence)
                 {
                     is_escape_sequence = true;
-                    escape_sequence_.erase();
+                    m_escape_sequence.erase();
                     string_buffer = character_buffer;
                     continue; // Get next character
                 }
                 else
                 {
                     // If we get here again and second char is another ESC, Return 27
-                    escape_sequence_.erase();
+                    m_escape_sequence.erase();
                     string_buffer.erase();
                     return "\x1b";
                 }
@@ -208,7 +205,7 @@ std::string UserSession::GetInput()
                 // Check for Consecutive ESC sequences, if so exit on ESC
                 if (character_buffer[0] == 27 && string_buffer.empty())
                 {
-                    escape_sequence_.erase();
+                    m_escape_sequence.erase();
                     string_buffer.erase();
                     return "\x1b";
                 }
@@ -237,55 +234,55 @@ std::string UserSession::GetInput()
 
                         case 'A': // Up
                             string_buffer += character_buffer;
-                            escape_sequence_ = string_buffer;
+                            m_escape_sequence = string_buffer;
                             string_buffer.erase();
                             return "\x1b";
 
                         case 'B': // Dn
                             string_buffer += character_buffer;
-                            escape_sequence_ = string_buffer;
+                            m_escape_sequence = string_buffer;
                             string_buffer.erase();
                             return "\x1b";
 
                         case 'C': // Lt
                             string_buffer += character_buffer;
-                            escape_sequence_ = string_buffer;
+                            m_escape_sequence = string_buffer;
                             string_buffer.erase();
                             return "\x1b";
 
                         case 'D': // Rt
                             string_buffer += character_buffer;
-                            escape_sequence_ = string_buffer;
+                            m_escape_sequence = string_buffer;
                             string_buffer.erase();
                             return "\x1b";
 
                         case 'K': // End
                             string_buffer += character_buffer;
-                            escape_sequence_ = string_buffer;
+                            m_escape_sequence = string_buffer;
                             string_buffer.erase();
                             return "\x1b";
 
                         case 'F': // End = 0F
                             string_buffer += character_buffer;
-                            escape_sequence_ = string_buffer;
+                            m_escape_sequence = string_buffer;
                             string_buffer.erase();
                             return "\x1b";
 
                         case 'H': // Home
                             string_buffer += character_buffer;
-                            escape_sequence_ = string_buffer;
+                            m_escape_sequence = string_buffer;
                             string_buffer.erase();
                             return "\x1b";
 
                         case 'V': // PageUP
                             string_buffer += character_buffer;
-                            escape_sequence_ = string_buffer;
+                            m_escape_sequence = string_buffer;
                             string_buffer.erase();
                             return "\x1b";
 
                         case 'U': // PageDn
                             string_buffer += character_buffer;
-                            escape_sequence_ = string_buffer;
+                            m_escape_sequence = string_buffer;
                             string_buffer.erase();
                             return "\x1b";
 
@@ -307,20 +304,20 @@ std::string UserSession::GetInput()
                         case 82: // Function Keys. R F3
                         case 83: // Function Keys. S F4
                             string_buffer += character_buffer;
-                            escape_sequence_ = string_buffer;
+                            m_escape_sequence = string_buffer;
                             string_buffer.erase();
                             return "\x1b";
 
                             // End of Number Sequence.
                         case '~': // Tail
                             string_buffer += character_buffer;
-                            escape_sequence_ = string_buffer;
+                            m_escape_sequence = string_buffer;
                             string_buffer.erase();
                             return "\x1b";
 
                         case '\0':
                             //current_buffer += ch;
-                            escape_sequence_ = string_buffer;
+                            m_escape_sequence = string_buffer;
                             string_buffer.erase();
                             return "\x1b";
 
@@ -328,7 +325,7 @@ std::string UserSession::GetInput()
                             // Not ESC Sequence.
                             // Done with loop.
                             string_buffer += ' ';
-                            escape_sequence_ = string_buffer;
+                            m_escape_sequence = string_buffer;
                             string_buffer.erase();
                             return "\x1b";
                     }

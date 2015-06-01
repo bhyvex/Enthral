@@ -38,7 +38,7 @@ namespace stdio
  * 13 is mapped to CR   Excluded 'Music Note'
  * 27 is mapped to ESC  Excluded 'Left Arrow'
  */
-wchar_t CP437TABLE[] =
+wchar_t CP437_TABLE[] =
 {
     L'\u0000', L'\u263A', L'\u263B', L'\u2665', L'\u2666', L'\u2663', // 5
     L'\u2660', L'\u2022', L'\u0008', L'\u0009', L'\u000A', L'\u2642', // 11
@@ -86,9 +86,9 @@ wchar_t CP437TABLE[] =
 };
 
 StandardIO::StandardIO() :
-    term_reset_(0),
-    term_echo_(1),
-    term_canonical_(3)
+    m_term_reset(0),
+    m_term_echo(1),
+    m_term_canonical(3)
 {}
 
 StandardIO::~StandardIO()
@@ -102,9 +102,9 @@ StandardIO::~StandardIO()
 bool StandardIO::InitConsoleTTY()
 {
     // Set Current Terminal Options
-    if (!SetTerminalAttributes(term_echo_))
+    if (!SetTerminalAttributes(m_term_echo))
         return false;
-    if (!SetTerminalAttributes(term_canonical_))
+    if (!SetTerminalAttributes(m_term_canonical))
         return false;
 
     return true;
@@ -117,7 +117,7 @@ bool StandardIO::InitConsoleTTY()
 bool StandardIO::ResetConsoleTTY()
 {
     // Set Current Terminal Options
-    if (!SetTerminalAttributes(term_reset_))
+    if (!SetTerminalAttributes(m_term_reset))
         return false;
 
     return true;
@@ -131,35 +131,35 @@ bool StandardIO::SetTerminalAttributes(int term_option)
     switch(term_option)
     {
         case 0: // Reset To Original
-            if(tcgetattr(STDIN_FILENO,&terminal_attributes_) != 0) return false;
-            terminal_attributes_.c_lflag |= ECHO;
-            terminal_attributes_.c_lflag |= ICANON;
-            terminal_attributes_.c_lflag |= ISIG;
-            if(tcsetattr(STDIN_FILENO,TCSANOW,&terminal_attributes_) != 0) return false;
+            if(tcgetattr(STDIN_FILENO,&m_terminal_attributes) != 0) return false;
+            m_terminal_attributes.c_lflag |= ECHO;
+            m_terminal_attributes.c_lflag |= ICANON;
+            m_terminal_attributes.c_lflag |= ISIG;
+            if(tcsetattr(STDIN_FILENO,TCSANOW,&m_terminal_attributes) != 0) return false;
             break;
 
         case 1: // Terminal Echo Off
-            if(tcgetattr(STDIN_FILENO,&terminal_attributes_) != 0) return false;
-            terminal_attributes_.c_lflag &= ~(ECHO);
-            if(tcsetattr(STDIN_FILENO,TCSAFLUSH,&terminal_attributes_) != 0) return false;
+            if(tcgetattr(STDIN_FILENO,&m_terminal_attributes) != 0) return false;
+            m_terminal_attributes.c_lflag &= ~(ECHO);
+            if(tcsetattr(STDIN_FILENO,TCSAFLUSH,&m_terminal_attributes) != 0) return false;
             break;
 
         case 2: // Single Key Hot-key input allow ^C and ^Z signals
-            if(tcgetattr(STDIN_FILENO,&terminal_attributes_) != 0) return false;
-            terminal_attributes_.c_lflag    &= ~(ICANON); // On
-            terminal_attributes_.c_lflag    |= ISIG;      // Off
-            terminal_attributes_.c_cc[VMIN]  = 1;
-            terminal_attributes_.c_cc[VTIME] = 1;
-            if(tcsetattr(STDIN_FILENO,TCSANOW,&terminal_attributes_) != 0) return false;
+            if(tcgetattr(STDIN_FILENO,&m_terminal_attributes) != 0) return false;
+            m_terminal_attributes.c_lflag    &= ~(ICANON); // On
+            m_terminal_attributes.c_lflag    |= ISIG;      // Off
+            m_terminal_attributes.c_cc[VMIN]  = 1;
+            m_terminal_attributes.c_cc[VTIME] = 1;
+            if(tcsetattr(STDIN_FILENO,TCSANOW,&m_terminal_attributes) != 0) return false;
             break;
 
         case 3: // Single Key Hot-key input No ^C and ^Z Signals
-            if(tcgetattr(STDIN_FILENO,&terminal_attributes_) != 0) return false;
-            terminal_attributes_.c_lflag    &= ~(ICANON);
-            terminal_attributes_.c_lflag    &= ~(ISIG);
-            terminal_attributes_.c_cc[VMIN]  = 0;
-            terminal_attributes_.c_cc[VTIME] = 0;
-            if(tcsetattr(STDIN_FILENO,TCSANOW,&terminal_attributes_) != 0) return false;
+            if(tcgetattr(STDIN_FILENO,&m_terminal_attributes) != 0) return false;
+            m_terminal_attributes.c_lflag    &= ~(ICANON);
+            m_terminal_attributes.c_lflag    &= ~(ISIG);
+            m_terminal_attributes.c_cc[VMIN]  = 0;
+            m_terminal_attributes.c_cc[VTIME] = 0;
+            if(tcsetattr(STDIN_FILENO,TCSANOW,&m_terminal_attributes) != 0) return false;
             break;
 
         default:
@@ -218,7 +218,7 @@ void StandardIO::TranslateUnicode(std::string standard_string)
     {
         ascii_value = std::char_traits<char>().to_int_type(standard_string[i]);
         if (ascii_value < 256)
-            wide_string = CP437TABLE[ascii_value];
+            wide_string = CP437_TABLE[ascii_value];
         else
             wide_string = standard_string[i];
 

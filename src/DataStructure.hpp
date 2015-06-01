@@ -19,7 +19,7 @@
 namespace data
 {
 
-const std::string g_bbs_version = "Enthral/2 BBS v1.0";
+const std::string g_bbs_version = "Enthral/2 BBS Alpha 2";
 
 typedef struct ConfigurationRecord
 {

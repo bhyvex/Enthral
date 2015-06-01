@@ -21,9 +21,7 @@
 
 #include <sys/stat.h> // mkdir
 
-
 // Add Methods for Config Files Exists for Both Program and Home!
-
 
 /*
  * This will Set the Path and Attempt To Create a
@@ -31,7 +29,7 @@
  */
 bool ConfigIO::GenerateNewSystemConfigProgramPath()
 {
-    return CreateConfigFile(session_->program_path_, false);
+    return CreateConfigFile(m_session->m_program_path, false);
 }
 
 /*
@@ -41,7 +39,7 @@ bool ConfigIO::GenerateNewSystemConfigProgramPath()
  */
 bool ConfigIO::GenerateNewSystemConfigHome()
 {
-    return CreateConfigFile(session_->home_directory_, true);
+    return CreateConfigFile(m_session->m_home_directory, true);
 }
 
 /*
@@ -71,7 +69,6 @@ bool ConfigIO::CreateConfigFile(const std::string &path, bool use_home_directory
     }
 
     // Add Configuration Filename to Path
-
     cfg.setTabWidth(4);
     cfg.setIncludeDir(full_path.c_str());
 
@@ -93,7 +90,6 @@ bool ConfigIO::CreateConfigFile(const std::string &path, bool use_home_directory
         std::cerr << "I/O error while writing file: " << full_path << std::endl;
         return(EXIT_FAILURE);
     }
-
 
     /*
     // Setup Configuration Tree.
@@ -132,7 +128,6 @@ bool ConfigIO::CreateConfigFile(const std::string &path, bool use_home_directory
     return(EXIT_FAILURE);
     }
     */
-
 
     return true;
 }

@@ -26,14 +26,14 @@ class ConfigIO
 {
 public:
 
-    UserSession *session_;
+    UserSession *m_session;
 
     ConfigIO(UserSession *session)
     {
-        session_ = session;
+        m_session = session;
     }
     ~ConfigIO() { }
-    
+
     // Add Methods for Config Files Exists for Both Program and Home!
 
     // Methods

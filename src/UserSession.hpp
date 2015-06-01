@@ -35,44 +35,41 @@ public:
     UserSession();
     ~UserSession();
 
-    data::UserRecord          user_record_;
-    data::ConfigurationRecord system_record_;
+    data::UserRecord          m_user_record;
+    data::ConfigurationRecord m_system_record;
 
-    bool is_session_active_;     // Session is Active
-    bool is_session_logged_in_;  // User Logged In
-    bool is_newuser_;            // First Login
-    int node_number_;
-    int terminal_width_;
-    int terminal_height_;
-    int prelogin_timeout_in_minutes_; // Timeout for during Login Process
-    int system_timeout_in_minutes_;   // Timeout once logged in as Registered User.
+    bool m_is_session_active;     // Session is Active
+    bool m_is_session_logged_in;  // User Logged In
+    bool m_is_newuser;            // First Login
+    int m_node_number;
+    int m_terminal_width;
+    int m_terminal_height;
+    int m_prelogin_timeout_in_minutes; // Timeout for during Login Process
+    int m_system_timeout_in_minutes;   // Timeout once logged in as Registered User.
 
-    std::string ip_address_;
-    std::string ip_hostname_;
-    std::string program_path_;        // Create / Check for Configuration File
-    std::string home_directory_;      // Create / Check for Configuration File Alternate
+    std::string m_ip_address;
+    std::string m_ip_hostname;
+    std::string m_program_path;        // Create / Check for Configuration File
+    std::string m_home_directory;      // Create / Check for Configuration File Alternate
 
     // io
-    std::string escape_sequence_;
+    std::string m_escape_sequence;
 
     // Settings
-    std::string terminal_type_;
-    std::time_t session_start_;
+    std::string m_terminal_type;
+    std::time_t m_session_start;
 
-    bool is_timeout_warning_;
-    std::time_t start_timeout_;
+    bool m_is_timeout_warning;
+    std::time_t m_start_timeout;
 
     // Notification Queue
-    std::queue<std::string> notifications_;
+    std::queue<std::string> m_notifications;
 
     // Class IO Functions
     void CheckTerminalSize();
     bool InputTimeout();
     std::string GetEscapeSequence();
     std::string GetInput();
-
-
 };
-
 
 #endif // USERSESSION_HPP
