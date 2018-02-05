@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2004-2014 by Michael Griffin                            *
+ *   Copyright (C) 2004-2017 by Michael Griffin                            *
  *   mrmisticismo@hotmail.com                                              *
  *                                                                         *
  *   Purpose:                                                              *
@@ -12,12 +12,6 @@
  *   (at your option) any later version.                                   *
  ***************************************************************************/
 
-// Enthral SVN: $Id: msg_stats.cpp 1 2014-03-29 07:30:21Z mercyful $
-// Source: $HeadURL: file:///home/merc/repo/enthral/trunk/src/msg_stats.cpp $
-// $LastChangedDate: 2014-03-29 02:30:21 -0500 (Sat, 29 Mar 2014) $
-// $LastChangedRevision: 1 $
-// $LastChangedBy: mercyful $
-
 # include "msg_stats.h"
 # include "struct.h"
 
@@ -27,7 +21,7 @@
 # include <cstdio>
 # include <ctime>
 # include <cctype>
-# include <unistd.h> // gcc 4.7
+# include <unistd.h>
 
 using namespace std;
 
@@ -36,32 +30,24 @@ using namespace std;
  */
 int msg_stats::hist_lockSet(int onoff, char *area)
 {
-
     std::string path = LOCKPATH;
     path   += area;
     path   += "_stats.lck";
 
-    if (!onoff)
-    {
+    if (!onoff) {
         remove((char *)path.c_str());
         return TRUE;
     }
 
     //While lock file missing, create, or loop until it disapears.
     FILE *stream;
-    while(1)
-    {
+    while(1) {
         stream = fopen(path.c_str(),"rb+");
-        if(stream == NULL)
-        {
+        if(stream == NULL) {
             stream = fopen(path.c_str(), "wb");
-            if(stream == NULL)
-            {
-                //elog("Error history.lck!");
+            if(stream == NULL) {
                 return FALSE;
-            }
-            else
-            {
+            } else {
                 fclose(stream);
                 return TRUE;
             }
@@ -76,7 +62,6 @@ int msg_stats::hist_lockSet(int onoff, char *area)
  */
 int msg_stats::hist_write(MsgStats *stats, char *area)
 {
-
     std::string path = MESGPATH;
     path   += area;
     path   += ".sts";
@@ -84,12 +69,9 @@ int msg_stats::hist_write(MsgStats *stats, char *area)
     hist_lockSet(TRUE,area);
 
     FILE *stream = fopen(path.c_str(),"rb+");
-    if(stream == NULL)
-    {
+    if(stream == NULL) {
         stream = fopen(path.c_str(), "wb");
-        if(stream == NULL)
-        {
-            //elog("Error hist_write!");
+        if(stream == NULL) {
             hist_lockSet(FALSE,area);
             return x;
         }
@@ -106,7 +88,6 @@ int msg_stats::hist_write(MsgStats *stats, char *area)
  */
 int msg_stats::hist_read(MsgStats *stats, char *area)
 {
-
     std::string path = MESGPATH;
     path   += area;
     path   += ".sts";
@@ -114,12 +95,9 @@ int msg_stats::hist_read(MsgStats *stats, char *area)
 
     hist_lockSet(TRUE,area);
     FILE *stream = fopen(path.c_str(),"rb+");
-    if(stream == NULL)
-    {
+    if(stream == NULL) {
         stream=fopen(path.c_str(), "wb");
-        if(stream == NULL)
-        {
-            //elog("Error hist_read!");
+        if(stream == NULL) {
             hist_lockSet(FALSE,area);
             return x;
         }
@@ -133,5 +111,3 @@ int msg_stats::hist_read(MsgStats *stats, char *area)
     hist_lockSet(FALSE,area);
     return x;
 }
-
-

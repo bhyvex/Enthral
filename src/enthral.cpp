@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2004-2014 by Michael Griffin                            *
+ *   Copyright (C) 2004-2017 by Michael Griffin                            *
  *   mrmisticismo@hotmail.com                                              *
  *                                                                         *
  *   Purpose:                                                              *
@@ -12,13 +12,6 @@
  *   (at your option) any later version.                                   *
  ***************************************************************************/
 
-// Enthral SVN: $Id: enthral.cpp 10 2014-04-03 06:52:26Z merc $
-// Source: $HeadURL: file:///home/merc/repo/enthral/trunk/src/enthral.cpp $
-// $LastChangedDate: 2014-04-03 01:52:26 -0500 (Thu, 03 Apr 2014) $
-// $LastChangedRevision: 10 $
-// $LastChangedBy: merc $
-
-
 # ifdef HAVE_CONFIG_H
 # include <config.h>
 # endif
@@ -26,7 +19,6 @@
 # include "configbbs.h"
 # include "language.h"
 # include "main_system.h"
-//# include "menus.h"
 # include "conio.h"
 # include "users.h"
 # include "node.h"
@@ -36,16 +28,14 @@
 # include <cstdio>
 # include <csignal>
 # include <cerrno>
-
 # include <cstring>
 # include <cstdlib>
 
 # include <limits.h>
 # include <unistd.h>
-# include <pty.h>     // Struct Winsize
+# include <pty.h>
 # include <termios.h>
 # include <sys/stat.h>
-
 
 using namespace std;
 
@@ -80,8 +70,6 @@ int  TERM_HEIGHT      = 25;
 int  TERM_WIDTH       = 80;
 int  MAX_NODES        = 5;
 
-
-
 // Ansi Terminal Detected.
 int isANSI = FALSE;
 
@@ -94,101 +82,59 @@ struct termios old_termios;
 #include <sys/wait.h>
 #include <unistd.h>
 
-
-// Testing and debugging only!
-/*
-void print_trace()
-{
-
-    char pid_buf[30]={0};
-    sprintf(pid_buf, "%d", getpid());
-    char name_buf[512]={0};
-    //name_buf[readlink("/proc/self/exe", name_buf, 511)]=0;
-	name_buf[readlink("/home/merc/Downloads/enthral/source/src/enthral", name_buf, 511)]=0;
-    int child_pid = fork();
-    if (!child_pid)
-    {
-        dup2(2,1); // redirect output to stderr
-        fprintf(stdout,"stack trace for %s pid=%s\n",name_buf,pid_buf);
-        execlp("gdb", "gdb", "--batch", "-n", "-ex", "thread", "-ex", "bt", name_buf, pid_buf, NULL);
-        abort(); // If gdb failed to start
-    }
-    else
-    {
-        waitpid(child_pid,NULL,0);
-    }
-}
-*/
-
-// umask(S_IRWXG | SIRWXO);
-//Set the umask such that any files created won't allow the
-//group or the world to read, write, or execute.
-
 void killazombie (int iSig)
 {
-
-
-    // User Hung up or Disconnected, Shutdown properly and End Program..
-    // Add System Shutdown here.
-
-    // Node Node is Setup, Add Process to Read User Data From Node Filename
-    // Log User, Then Remove File to make sure node is clean.
     node    _node;
     users   _usr;
-    SESSION _io;
-
-    // Send Logoff Node notification.
-    //_io.lineolm_login(FALSE);
+    ConsoleIO _io;
 
     _node.node_remove_dropfiles(NODE_NUM);
     _node.node_remove(NODE_NUM);
 
-    if (strcmp((char *)user.handle,"") != 0 && UserLoggedIn == TRUE)
-    {
+    if (strcmp((char *)user.handle,"") != 0 && UserLoggedIn == TRUE) {
         user.dtlaston = GetCurrentDTSec();
         _usr.users_write(&user,user.idx);
     }
 
     UserLoggedIn = FALSE;
 
-    _io.errlog2((char *)"killazombie System Shutdown (User Hung Up on the System!).");
+    _io.errlog((char *)"killazombie System Shutdown (User Hung Up on the System!).");
 
-    switch(iSig)
-    {
+    switch(iSig) {
 
     case SIGHUP:
-        _io.errlog2((char *)"killazombie SIGHUP).");
+        _io.errlog((char *)"killazombie SIGHUP).");
         break;
     case SIGTERM:
-        _io.errlog2((char *)"killazombie SIGTERM).");
+        _io.errlog((char *)"killazombie SIGTERM).");
         break;
     case SIGINT:
-        _io.errlog2((char *)"killazombie SIGINT).");
+        _io.errlog((char *)"killazombie SIGINT).");
         break;
     case SIGILL:
-        _io.errlog2((char *)"killazombie SIGILL).");
+        _io.errlog((char *)"killazombie SIGILL).");
         break;
 
     case SIGABRT:
-        _io.errlog2((char *)"killazombie SIGABRT).");
+        _io.errlog((char *)"killazombie SIGABRT).");
         break;
     case SIGQUIT:
-        _io.errlog2((char *)"killazombie SIGQUIT).");
+        _io.errlog((char *)"killazombie SIGQUIT).");
         break;
     case SIGKILL:
-        _io.errlog2((char *)"killazombie SIGKILL).");
+        _io.errlog((char *)"killazombie SIGKILL).");
         break;
 
         // Masked Signals
     case SIGCHLD:
-        _io.errlog2((char *)"killazombie SIGCHLD).");
+        _io.errlog((char *)"killazombie SIGCHLD).");
         break;
     case SIGTTOU:
-        _io.errlog2((char *)"killazombie SIGTTOU).");
+        _io.errlog((char *)"killazombie SIGTTOU).");
         break;
 
     default:
-        _io.errlog2((char *)"Unknown Signal).");
+        _io.errlog((char *)"Unknown Signal).");
         break;
 
     }
@@ -202,24 +148,12 @@ void killazombie (int iSig)
     exit(iSig);
 }
 
-
-
 void exit_system(void)
 {
-    SESSION _io;
+    ConsoleIO _io;
     node    _node;
-//    users   _usr;
 
-    //_io.lineolm_login(FALSE);
-
-    // Clear Node Data.
-
-    // Send Logoff Node notification.
-    // his is done when menu system exits, no need for this here!
-    //_io.lineolm_login(FALSE);
-
-    //UserLoggedIn = FALSE;
-    _io.errlog2((char *)"At Exit!).");
+    _io.errlog((char *)"At Exit!).");
 
     _node.node_remove_dropfiles(NODE_NUM);
     _node.node_remove(NODE_NUM);
@@ -234,8 +168,7 @@ void sigwinch(int sig)
     struct winsize wsz;
 
     (void) signal(SIGWINCH, sigwinch);
-    if (ioctl(STDIN_FILENO, TIOCGWINSZ, &wsz)>=0 && wsz.ws_row>0 && wsz.ws_col>0)
-    {
+    if (ioctl(STDIN_FILENO, TIOCGWINSZ, &wsz)>=0 && wsz.ws_row>0 && wsz.ws_col>0) {
         TERM_HEIGHT=wsz.ws_row;
         TERM_WIDTH=wsz.ws_col;
     }
@@ -243,16 +176,11 @@ void sigwinch(int sig)
 
 int main(int argc, char *argv[])
 {
-    // Setup Signal Checking if Telnetd was killed.
-    // Then kill this program, Add Save Current Users Settings...
-    // NOTE This only killed if program kicked off directly from telnetd,
-    // if you run a bash script, that becomes a zombie process becasue it creates a second pty!
     (void) signal (SIGHUP,  killazombie);
     (void) signal (SIGTERM, killazombie);
     (void) signal (SIGINT,  killazombie);
     (void) signal (SIGILL,  killazombie);
     (void) signal (SIGKILL, killazombie);
-
     (void) signal (SIGABRT, killazombie);
     (void) signal (SIGQUIT, killazombie);
 
@@ -263,8 +191,7 @@ int main(int argc, char *argv[])
     (void) signal (SIGTTOU, SIG_IGN);
     (void) signal (SIGCHLD, SIG_IGN);
 
-
-    SESSION _io;
+    ConsoleIO _io;
     users   _usr;
 
     // Obtain a copy of the termios structure for stdout.
@@ -282,15 +209,12 @@ int main(int argc, char *argv[])
 
     memset(&BBSPATH,0,sizeof(BBSPATH));
     // Get FULL PATH TO EXE, and Chop off Filename for PATH
-    for (int i = 0; ; i++)
-    {
+    for (int i = 0; ; i++) {
         if (parg[i] == '\0') break;
         if (parg[i] == '/') num = i;
     }
-    if (num != 0)
-    {
-        for (int i = 0; i < num+1; i++)
-        {
+    if (num != 0) {
+        for (int i = 0; i < num+1; i++) {
             BBSPATH[i] = parg[i];
         }
     }
@@ -298,24 +222,19 @@ int main(int argc, char *argv[])
     // get environment varliable, if exists override current folder.
     char *pPath;
     pPath = std::getenv((char *)"ENTHRAL");
-    //printf((char *)" *** Environment 1: pPath: %s\r\n",pPath);
-    if (pPath!=NULL)
-    {
+    if (pPath!=NULL) {
         memset(&BBSPATH,0L,sizeof(BBSPATH));
         strcpy(BBSPATH,pPath);
     }
 
-    if (argc >= 6)
-    {
-        // Passed from Telnetd
+    if (argc >= 6) {
         sprintf(CLIENT_TERM,"%s",argv[5]);
     }
 
     // Set windows size from readin variables of environment.
     struct winsize ws;
 
-    if (ioctl(STDIN_FILENO, TIOCGWINSZ, &ws)>=0 && ws.ws_row>0 && ws.ws_col>0)
-    {
+    if (ioctl(STDIN_FILENO, TIOCGWINSZ, &ws)>=0 && ws.ws_row>0 && ws.ws_col>0) {
         TERM_HEIGHT = ws.ws_row;
         TERM_WIDTH  = ws.ws_col;
     }
@@ -329,20 +248,20 @@ int main(int argc, char *argv[])
     int iRet = 0;
     if ((iRet = chdir(BBSPATH)) == 0) {}
 
-    sprintf(DATAPATH,"%sdata/",BBSPATH);  // Data Path
-    sprintf(MENUPATH,"%smenu/",BBSPATH);  // Menu Files
-    sprintf(ANSIPATH,"%sansi/",BBSPATH);  // Ansi Files
-    sprintf(MESGPATH,"%smsgs/",BBSPATH);  // Message Files
-    sprintf(INIPATH,"%sini/",BBSPATH);    // INI Files
-    sprintf(DAPATH,"%sdareas/",BBSPATH);  // Data Area Data
+    sprintf(DATAPATH,"%sdata/",BBSPATH);   // Data Path
+    sprintf(MENUPATH,"%smenu/",BBSPATH);   // Menu Files
+    sprintf(ANSIPATH,"%sansi/",BBSPATH);   // Ansi Files
+    sprintf(MESGPATH,"%smsgs/",BBSPATH);   // Message Files
+    sprintf(INIPATH,"%sini/",BBSPATH);     // INI Files
+    sprintf(DAPATH,"%sdareas/",BBSPATH);   // Data Area Data
     sprintf(FILEPATH,"%sfiles/",BBSPATH);  // Files Area Data
     sprintf(USRSIG,"%susersig/",BBSPATH);  // Files Area Data
 
     // Direcotries that don't always have data, have checks for creating them!
     sprintf(NODEPATH,"%snode/",BBSPATH);   // Nodes
-    sprintf(LOCKPATH,"%slock/",BBSPATH);  // r/w Lock Files
-    sprintf(SCRIPTS,"%sscripts/",BBSPATH);  // scripts path.  ie python
-    sprintf(ENTHRALTMP,"/tmp/enthral");   // Tmp, Sockets, IPC
+    sprintf(LOCKPATH,"%slock/",BBSPATH);   // r/w Lock Files
+    sprintf(SCRIPTS,"%sscripts/",BBSPATH); // scripts path.  ie python
+    sprintf(ENTHRALTMP,"/tmp/enthral");    // Tmp, Sockets, IPC
 
     // Do Error Checking if CONFIG.CFG File exists, if not creates it
     if(configdataexists() == false)
@@ -351,115 +270,83 @@ int main(int argc, char *argv[])
     // Open and Read Config file
     parseconfig();
 
-
     // Get Users incomming IP Address
     // Unless being kicked off locally.
-    if (argc >= 3)
-    {
+    if (argc >= 3) {
         sprintf(UsersIP,"%s",argv[1]);
         sprintf(UsersHOST,"%s",argv[2]);
-    }
-    else
-    {
+    } else {
         sprintf(UsersIP,"Localhost");
         sprintf(UsersHOST,"Localhost");
     }
 
     // Figure out Node Number
     node _node;
-    for (i = 1; ; i++)
-    {
-        if (_node.node_exists(i) == FALSE)
-        {
+    for (i = 1; ; i++) {
+        if (_node.node_exists(i) == FALSE) {
             NODE_NUM = i;
             break;
         }
     }
 
-    _io.errlog2((char *)" *** MAX_NODES: %i ",MAX_NODES);
+    _io.errlog((char *)" *** MAX_NODES: %i ",MAX_NODES);
 
     // Check if Node umber great then Max Node Number
     // Add this to config file.
-    if (NODE_NUM <= MAX_NODES)
-    {
-
-        //    _io.errlog((char *)" *** BBS Loaded! Root Path: %s",BBSPATH);
-
-        _io.errlog2((char *)"TERM FILE: %s ",CLIENT_TERM);
+    if (NODE_NUM <= MAX_NODES) {
+        _io.errlog((char *)"TERM FILE: %s ",CLIENT_TERM);
 
         // Go through and create basic directory structure if doesn't exist.
-        _io.errlog2((char *)"User Logged in IP: %s / %s - Node: %i ",UsersIP, UsersHOST, NODE_NUM);
+        _io.errlog((char *)"User Logged in IP: %s / %s - Node: %i ",UsersIP, UsersHOST, NODE_NUM);
 
         // Create Data Directory
         sprintf(sCmd,"%s",DATAPATH);
-        if (mkdir(sCmd, 0770) == -1 && errno != EEXIST)
-        {
-            // Go through and create basic directory structure if doesn't exist.
-            //        _io.errlog((char *)"Err: Unable to create data folder.");
+        if (mkdir(sCmd, 0770) == -1 && errno != EEXIST) {
         }
 
         // Create Node Directory
         sprintf(sCmd,"%s",MESGPATH);
-        if (mkdir(sCmd, 0770) == -1 && errno != EEXIST)
-        {
-            //        _io.errlog((char *)"Err: Unable to create msgs folder.");
+        if (mkdir(sCmd, 0770) == -1 && errno != EEXIST) {
         }
 
         // Create Node Directory
         sprintf(sCmd,"%s",FILEPATH);
-        if (mkdir(sCmd, 0770) == -1 && errno != EEXIST)
-        {
-            //        _io.errlog((char *)"Err: Unable to create files folder.");
+        if (mkdir(sCmd, 0770) == -1 && errno != EEXIST) {
         }
 
         // Create Node Directory
         sprintf(sCmd,"%s",NODEPATH);
-        if (mkdir(sCmd, 0770) == -1 && errno != EEXIST)
-        {
-            //        _io.errlog((char *)"Err: Unable to create node folder.");
+        if (mkdir(sCmd, 0770) == -1 && errno != EEXIST) {
         }
 
         // Create Node Subdirectory NodeNum Directory!
         sprintf(NODEDIR,"node%i",NODE_NUM);
         sprintf(sCmd,"%s%s",NODEPATH,NODEDIR);
-        if (mkdir(sCmd, 0770) == -1 && errno != EEXIST)
-        {
-            //        _io.errlog((char *)"Err: Unable to create NODE_NUM folder.");
+        if (mkdir(sCmd, 0770) == -1 && errno != EEXIST) {
         }
 
         // Create Lockfile directory.
         sprintf(sCmd,"%slock",BBSPATH);
-        if (mkdir(sCmd, 0770) == -1 && errno != EEXIST)
-        {
-            //        _io.errlog((char *)"Err: Unable to create lock folder.");
+        if (mkdir(sCmd, 0770) == -1 && errno != EEXIST) {
         }
 
         // Create UserSig Directory
         sprintf(sCmd,"%susersig",BBSPATH);
-        if (mkdir(sCmd, 0770) == -1 && errno != EEXIST)
-        {
-            //        _io.errlog((char *)"Err: Unable to create usersig folder.");
+        if (mkdir(sCmd, 0770) == -1 && errno != EEXIST) {
         }
 
         // Create UserSig Directory
         sprintf(sCmd,"%sscripts",BBSPATH);
-        if (mkdir(sCmd, 0770) == -1 && errno != EEXIST)
-        {
-            //        _io.errlog((char *)"Err: Unable to create scripts folder.");
+        if (mkdir(sCmd, 0770) == -1 && errno != EEXIST) {
         }
 
         // Create TMP Directory!
-        if (mkdir(ENTHRALTMP, 0770) == -1 && errno != EEXIST)
-        {
-            //        _io.errlog((char *)"Err: Unable to create /tmp/enthral folder.");
+        if (mkdir(ENTHRALTMP, 0770) == -1 && errno != EEXIST) {
         }
-
 
         // Compile Language File on Startup {Data dir has to be present first!}
         language *lang = new language;
-        if (!lang)
-        {
-            //        _io.errlog((char *)"Err: Unable to Allocate Memory for Language.txt Compile.");
+        if (!lang) {
         }
 
         isANSI = TRUE;
@@ -472,46 +359,32 @@ int main(int argc, char *argv[])
         sprintf((char *)user.handle,"User Logging In");
         _node.node_write(&user,NODE_NUM);
 
-
         // Test Setting the Terminal back to Original.
         // If unable to, then error.
         tcflush( STDOUT_FILENO, TCIFLUSH);
         if ( tcsetattr( STDOUT_FILENO, TCSADRAIN ,&old_termios ) )
             return( 2 );
 
-
         // Procedures to run at shutdown.
-        atexit(exit_system);  // Removed Node Files, and Saves Use On Proper Shutdown
+        atexit(exit_system);
 
         // New internode/process communication WIP!
         init_nodes();
 
-
-
-
-        /*-------------------------------------------------------------------------
-            Main System Loop,
-         -------------------------------------------------------------------------*/
-
         main_system ms;
-        ms.start(&user); // Main Loop.
+        ms.start(&user);
 
-    }
-    else
-    {
-        // Go through and create basic directory structure if doesn't exist.
-        _io.errlog2((char *)"User Logged in IP: %s / %s - Node: %i ",UsersIP, UsersHOST, NODE_NUM);
-        _io.errlog2((char *)"Max Number of Nodes Reached, Please Try again sortly. ");
+    } else {
+        _io.errlog((char *)"User Logged in IP: %s / %s - Node: %i ",UsersIP, UsersHOST, NODE_NUM);
+        _io.errlog((char *)"Max Number of Nodes Reached, Please Try again sortly. ");
         _io.pipe2ansi ((char *)"|CR|CR|15Max Number of Nodes Reached, Please Try again sortly. |DE |DE");
     }
-    /*-------------------------------------------------------------------------
-        Logoff Sequence
-     -------------------------------------------------------------------------*/
 
-    if (strcmp((char *)user.handle,"") != 0 && UserLoggedIn == TRUE)
-    {
+    // Shutdown Sequence.
+    if (strcmp((char *)user.handle,"") != 0 && UserLoggedIn == TRUE) {
         user.dtlaston = GetCurrentDTSec();
-        _usr.users_write(&user,user.idx); // Save Stats
+         // Save Stats
+        _usr.users_write(&user,user.idx);
     }
 
     // Test Setting the Terminal back to Original.
@@ -527,7 +400,5 @@ int main(int argc, char *argv[])
     _node.node_remove_dropfiles(NODE_NUM);
     _node.node_remove(NODE_NUM);
 
-//    _io.errlog((char *)"System Shutdown Cleanly.");
     exit( 0 );
 }
-

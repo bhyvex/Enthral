@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2004-2014 by Michael Griffin                            *
+ *   Copyright (C) 2004-2017 by Michael Griffin                            *
  *   mrmisticismo@hotmail.com                                              *
  *                                                                         *
  *   Purpose:                                                              *
@@ -11,12 +11,6 @@
  *   the Free Software Foundation; either version 2 of the License, or     *
  *   (at your option) any later version.                                   *
  ***************************************************************************/
-
-// Enthral SVN: $Id: user_list.cpp 1 2014-03-29 07:30:21Z mercyful $
-// Source: $HeadURL: file:///home/merc/repo/enthral/trunk/src/user_list.cpp $
-// $LastChangedDate: 2014-03-29 02:30:21 -0500 (Sat, 29 Mar 2014) $
-// $LastChangedRevision: 1 $
-// $LastChangedBy: mercyful $
 
 # include "struct.h"
 # include "users.h"
@@ -42,7 +36,6 @@ using namespace std;
  */
 bool usrlist_ini::usrl_exists()
 {
-
     iTop = 0;
     iBot = 0;
 
@@ -71,8 +64,7 @@ bool usrlist_ini::usrl_exists()
 
     FILE *stream;
     stream = fopen(path.c_str(),"rb+");
-    if(stream == NULL)
-    {
+    if(stream == NULL) {
         perror("Error unable to read userlst.ini, check permissions!");
         return false;
     }
@@ -85,14 +77,12 @@ bool usrlist_ini::usrl_exists()
  */
 void usrlist_ini::usrl_create()
 {
-
     std::string name = INIPATH;
     name += sININAME;
 
     ofstream outStream2;
     outStream2.open( name.c_str(), ofstream::out | ofstream::trunc );
-    if (!outStream2.is_open())
-    {
+    if (!outStream2.is_open()) {
         printf( "\nError Creating: %s \n", name.c_str());
         return;
     }
@@ -107,7 +97,6 @@ void usrlist_ini::usrl_create()
  */
 void usrlist_ini::usrl_chkpar(std::string &data)
 {
-
     std::string temp1;
     std::string::size_type st1 = 0;
     std::string::size_type st2 = 0;
@@ -128,109 +117,69 @@ void usrlist_ini::usrl_chkpar(std::string &data)
  */
 void usrlist_ini::usrl_check(std::string cfgdata)
 {
-
     std::string::size_type id1 = 0;
     std::string temp = cfgdata;
     if (temp[0] == '#') return;
-    else if (temp.find("set TOP ", 0) != std::string::npos)
-    {
+    else if (temp.find("set TOP ", 0) != std::string::npos) {
         usrl_chkpar(temp);
         id1 = atoi(temp.c_str());
         iTop = id1;
-    }
-    else if (temp.find("set BOT ", 0) != std::string::npos)
-    {
+    } else if (temp.find("set BOT ", 0) != std::string::npos) {
         usrl_chkpar(temp);
         id1 = atoi(temp.c_str());
         iBot = id1;
-    }
-    else if (temp.find("set THEME_NAME ", 0) != std::string::npos)
-    {
+    } else if (temp.find("set THEME_NAME ", 0) != std::string::npos) {
         usrl_chkpar(temp);
         strcpy(sTHEME_NAME,(char *)temp.c_str());
-    }
-    else if (temp.find("set ANSI_FILE ", 0) != std::string::npos)
-    {
+    } else if (temp.find("set ANSI_FILE ", 0) != std::string::npos) {
         usrl_chkpar(temp);
         strcpy(sANSI_FILE,(char *)temp.c_str());
-    }
-    else if (temp.find("set ANSI_HELP ", 0) != std::string::npos)
-    {
+    } else if (temp.find("set ANSI_HELP ", 0) != std::string::npos) {
         usrl_chkpar(temp);
         strcpy(sANSI_HELP,(char *)temp.c_str());
-    }
-    else if (temp.find("set MENU_PROMPT ", 0) != std::string::npos)
-    {
+    } else if (temp.find("set MENU_PROMPT ", 0) != std::string::npos) {
         usrl_chkpar(temp);
         strcpy(sMENU_PROMPT,(char *)temp.c_str());
-    }
-    else if (temp.find("set MENU_PROMPT2 ", 0) != std::string::npos)
-    {
+    } else if (temp.find("set MENU_PROMPT2 ", 0) != std::string::npos) {
         usrl_chkpar(temp);
         strcpy(sMENU_PROMPT2,(char *)temp.c_str());
-    }
-    else if (temp.find("set PAGENUM ", 0) != std::string::npos)
-    {
+    } else if (temp.find("set PAGENUM ", 0) != std::string::npos) {
         usrl_chkpar(temp);
         strcpy(sPAGENUM,(char *)temp.c_str());
-    }
-    else if (temp.find("set PAGETOTAL ", 0) != std::string::npos)
-    {
+    } else if (temp.find("set PAGETOTAL ", 0) != std::string::npos) {
         usrl_chkpar(temp);
         strcpy(sPAGETOTAL,(char *)temp.c_str());
-    }
-    else if (temp.find("set MOREUP ", 0) != std::string::npos)
-    {
+    } else if (temp.find("set MOREUP ", 0) != std::string::npos) {
         usrl_chkpar(temp);
         strcpy(sMOREUP,(char *)temp.c_str());
-    }
-    else if (temp.find("set MOREUP_CHAR ", 0) != std::string::npos)
-    {
+    } else if (temp.find("set MOREUP_CHAR ", 0) != std::string::npos) {
         usrl_chkpar(temp);
         strcpy(sMOREUP_CHAR,(char *)temp.c_str());
-    }
-    else if (temp.find("set MOREDOWN ", 0) != std::string::npos)
-    {
+    } else if (temp.find("set MOREDOWN ", 0) != std::string::npos) {
         usrl_chkpar(temp);
         strcpy(sMOREDOWN,(char *)temp.c_str());
-    }
-    else if (temp.find("set MOREDOWN_CHAR ", 0) != std::string::npos)
-    {
+    } else if (temp.find("set MOREDOWN_CHAR ", 0) != std::string::npos) {
         usrl_chkpar(temp);
         strcpy(sMOREDOWN_CHAR,(char *)temp.c_str());
-    }
-    else if (temp.find("set MOREMSG_ON ", 0) != std::string::npos)
-    {
+    } else if (temp.find("set MOREMSG_ON ", 0) != std::string::npos) {
         usrl_chkpar(temp);
         strcpy(sMOREMSG_ON,(char *)temp.c_str());
-    }
-    else if (temp.find("set MOREMSG_WORD_ON ", 0) != std::string::npos)
-    {
+    } else if (temp.find("set MOREMSG_WORD_ON ", 0) != std::string::npos) {
         usrl_chkpar(temp);
         strcpy(sMOREMSG_WORD_ON,(char *)temp.c_str());
-    }
-    else if (temp.find("set MOREMSG_OFF ", 0) != std::string::npos)
-    {
+    } else if (temp.find("set MOREMSG_OFF ", 0) != std::string::npos) {
         usrl_chkpar(temp);
         strcpy(sMOREMSG_OFF,(char *)temp.c_str());
-    }
-    else if (temp.find("set MOREMSG_WORD_OFF ", 0) != std::string::npos)
-    {
+    } else if (temp.find("set MOREMSG_WORD_OFF ", 0) != std::string::npos) {
         usrl_chkpar(temp);
         strcpy(sMOREMSG_WORD_OFF,(char *)temp.c_str());
-    }
-    else if (temp.find("set INPUT_BOX ", 0) != std::string::npos)
-    {
+    } else if (temp.find("set INPUT_BOX ", 0) != std::string::npos) {
         usrl_chkpar(temp);
         strcpy(sINPUT_BOX,(char *)temp.c_str());
-    }
-    else if (temp.find("set TEXT_COLOR ", 0) != std::string::npos)
-    {
+    } else if (temp.find("set TEXT_COLOR ", 0) != std::string::npos) {
         usrl_chkpar(temp);
         strcpy(sTEXT_COLOR,(char *)temp.c_str());
-    }
-    else if (temp.find("set MAX_AREAS ", 0) != std::string::npos)
-    {
+    } else if (temp.find("set MAX_AREAS ", 0) != std::string::npos) {
         usrl_chkpar(temp);
         strcpy(sMAX_AREAS,(char *)temp.c_str());
     }
@@ -241,15 +190,12 @@ void usrlist_ini::usrl_check(std::string cfgdata)
  */
 int usrlist_ini::usrl_parse(int idx)
 {
-
-    if (!usrl_exists())
-    {
+    if (!usrl_exists()) {
         perror("Error unable to parse userlst.ini, check permissions!");
     }
-    //usrl_create();
 
-    char name[255]= {0};
-    char name2[255]= {0};
+    char name[355]= {0};
+    char name2[355]= {0};
 
     sprintf(name,"%s%s",INIPATH,sININAME);
     sprintf(name2,"%s%s%i.ini",INIPATH,sININAME,idx);
@@ -259,8 +205,7 @@ int usrlist_ini::usrl_parse(int idx)
     // Check if Theme Exists, if not return FALSE.
     FILE *stream;
     stream = fopen(name,"rb+");
-    if(stream == NULL)   // File is not Present
-    {
+    if(stream == NULL) {
         return FALSE;
     }
     fclose(stream);
@@ -268,15 +213,13 @@ int usrlist_ini::usrl_parse(int idx)
 
     ifstream inStream;
     inStream.open( name );
-    if (!inStream.is_open())
-    {
+    if (!inStream.is_open()) {
         printf("Couldn't Open Config File: %s\n", name);
         return FALSE;
     }
 
     std::string cfgdata;
-    for (;;)
-    {
+    for (;;) {
         std::getline(inStream,cfgdata,'\n');
         usrl_check(cfgdata);
         if(inStream.eof()) break;
@@ -290,7 +233,6 @@ int usrlist_ini::usrl_parse(int idx)
  */
 usr_list::usr_list()
 {
-
     tTop          = 1;
     tBot          = 1;
     CURRENT_ULIST = 0;
@@ -301,93 +243,64 @@ usr_list::usr_list()
  */
 void usr_list::ParseHeader(char *filename)
 {
-
-    // std::string temp;
     std::string path = ANSIPATH;
     path += filename;
     path += ".ans";
 
     mb_list_rec mr;
 
-    char MCI[3]     = {0};   // Holds MCI Codes to Parse
+    char MCI[3]     = {0};
     char sTemp[255] = {0};
     int  space = 0, foundr = 0 , foundl = 0;
-//    int  c = 0;
     std::string buff;
 
-    // Reads in Ansi file into Buffer Only
     readinAnsi(filename, buff);
 
     int id1 = 0;
-    while (id1 != -1)
-    {
-        // parse justify spacing right / left passing in string before
-        // replacing mci code. to Properly Space Output Ansi.
+    while (id1 != -1) {
         id1 = buff.find("%", 0);
         if (id1 == -1) break;
         memset(&MCI,0,sizeof(MCI));
         space = 0;
         // Check if MCI Code is Justified then Process this.
-        if (buff[id1+3] == '{')   // Left Justify
-        {
-            //elog("left justify: %c%c",buff[id1+4],buff[id1+5]);
-            MCI[0] = buff[id1+4]; // Get first Digit
-            MCI[1] = buff[id1+5]; // Get Second Digit
+        if (buff[id1+3] == '{') { // Left Justify
+            MCI[0] = buff[id1+4];
+            MCI[1] = buff[id1+5];
             space  = atoi(MCI);
             foundr = FALSE;
             foundl = TRUE;
-        }
-        else if (buff[id1+3] == '}')  // Right Justify
-        {
-            //elog("right justify: %c%c",buff[id1+4],buff[id1+5]);
-            MCI[0] = buff[id1+4]; // Get first Digit
-            MCI[1] = buff[id1+5]; // Get Second Digit
+        } else if (buff[id1+3] == '}') { // Right Justify
+            MCI[0] = buff[id1+4];
+            MCI[1] = buff[id1+5];
             space  = atoi(MCI);
-            //elog("right justify: %i",space);
             foundl = FALSE;
             foundr = TRUE;
         }
         // Now Get MCI Code
-        MCI[0] = buff[id1+1]; // Get first Digit
-        MCI[1] = buff[id1+2]; // Get Second Digit
+        MCI[0] = buff[id1+1];
+        MCI[1] = buff[id1+2];
 
         memset(&sTemp,0,sizeof(sTemp));
-        // Insert MCI Parsing here so we can reaplace full result with propering spacing.
-        //  	if (strcmp(MCI,"MA") == 0)  { temp += mr.mbdisplay; }
-        //    else
-        //  if (strcmp(MCI,"TH") == 0)  { temp += sTHEME_NAME; }
 
-
-        if (strcmp(MCI,"MA") == 0)
-        {
+        if (strcmp(MCI,"MA") == 0) {
             sprintf(sTemp,"%s", (char *)mr.mbdisplay);
-        }
-        else if (strcmp(MCI,"TH") == 0)
-        {
+        } else if (strcmp(MCI,"TH") == 0) {
             sprintf(sTemp,"%s", (char *)sTHEME_NAME);
         }
 
-        /*
-                if (strcmp(MCI,"TH") == 0) {
-                    sprintf(sTemp,"#%i. %s",thisuser->readertheme+1,sTHEME_NAME); }
-        */
-
         // MCI Translation .
-        if (foundl == TRUE)
-        {
+        if (foundl == TRUE) {
             lspacing(sTemp,space);
-        }
-        else if (foundr == TRUE)
-        {
+        } else if (foundr == TRUE) {
             rspacing(sTemp,space);
         }
 
         //If we Parsed Justify, then Erase that MCI Code as well.
         (space != 0) ?
-        buff.replace(id1,6,sTemp):
-        buff.replace(id1,3,sTemp);
+            buff.replace(id1,6,sTemp):
+            buff.replace(id1,3,sTemp);
     }
-    //elog("Finished Parsing MCI Codes...");
+
     pipe2ansi((char *)buff.c_str());
 }
 
@@ -396,14 +309,13 @@ void usr_list::ParseHeader(char *filename)
  */
 void usr_list::SetupList(UserRec *user)
 {
-
     sprintf(sININAME,"%s",(char *)"usrlist.ini");
     thisuser = user;
-    // Check What Theme user has selected.
-    if (usrl_parse(thisuser->readertheme) == FALSE)
-    {
+
+    if (usrl_parse(thisuser->readertheme) == FALSE) {
         usrl_parse();
     }
+
     tTop = iTop;
     tBot = iBot;
 }
@@ -413,14 +325,13 @@ void usr_list::SetupList(UserRec *user)
  */
 void usr_list::SetupEmailList(UserRec *user)
 {
-
     sprintf(sININAME,"%s",(char *)"eusrlist.ini");
     thisuser = user;
-    // Check What Theme user has selected.
-    if (usrl_parse(thisuser->readertheme) == FALSE)
-    {
+
+    if (usrl_parse(thisuser->readertheme) == FALSE) {
         usrl_parse();
     }
+
     tTop = iTop;
     tBot = iBot;
 }
@@ -430,16 +341,11 @@ void usr_list::SetupEmailList(UserRec *user)
  */
 int usr_list::change_theme(int idx)
 {
-
-    // Check What Theme user has selected.
-    if (usrl_parse(idx) == FALSE)
-    {
-        // Theme Doesn't Exist.
+    if (usrl_parse(idx) == FALSE) {
         return FALSE;
     }
     thisuser->readertheme = idx;
 
-    // Save User Settings.
     UserRec usr;
     usr = *thisuser;
     users _usr;
@@ -452,24 +358,19 @@ int usr_list::change_theme(int idx)
     return TRUE;
 }
 
-
 /*
  * UserList FullScreen - Generate List of Users into a Vector
  */
 vector< UserRec > usr_list::read_users()
 {
-
-    SESSION s;
+    ConsoleIO s;
     UserRec urecord;
     std::vector< UserRec > result;
 
-//    s . errlog((char *)"read_users");
-
-    users   _usr; // Class
+    users   _usr;
 
     ulong idx = 0;
-    while(_usr.users_read(&urecord,idx))
-    {
+    while(_usr.users_read(&urecord,idx)) {
         urecord . idx = idx;
         result . push_back(urecord);
         ++idx;
@@ -478,50 +379,36 @@ vector< UserRec > usr_list::read_users()
     return result;
 }
 
-
 /*
  * UserList FullScreen - Builder UserList LightBar Tempaltes
  */
 vector< list_bar > usr_list::build_userlist(UserRec *usr, std::string &temp)   //, Query &qry) {
 {
-
-    UserRec urecord;
-
+    UserRec                  urecord;
     list_bar                 ubar;
     std::vector<list_bar>    result;
     std::vector<UserRec>     ulist;
 
-    SESSION       s(usr); // Pass User Incase there are MCI Codes for User Info.
-
-//    s . errlog((char *)" * build_users * ");
+    ConsoleIO       s(usr);
 
     int email = FALSE;
-    if (strcmp(sININAME,(char *)"eusrlist.ini") == 0)
-    {
+    if (strcmp(sININAME,(char *)"eusrlist.ini") == 0) {
         email = TRUE;
     }
 
     int c = 0;
-    //std::string temp = "";
     std::string path  = "";
     std::string temp3 = "";
     temp.erase();
 
-
     FILE *inStream;
     long  idx = 1;
-//    long  cnt = 0;
     long  i   = 0;
-    // long  usernum = 0;
-    // long  lr  = 0;
-
     char  MCI[3]= {0};
     char  temp2[100]= {0};
     int   space  = 0;
     int   foundr = FALSE;
     int   foundl = FALSE;
-//    int   reset  = FALSE;
-//    int   dont   = FALSE;
 
     std::string ans  = "";
     std::string ans1 = "";
@@ -535,12 +422,10 @@ vector< list_bar > usr_list::build_userlist(UserRec *usr, std::string &temp)   /
         path += "eulistmid1.ans";
     else
         path += "ulistmid1.ans";
-    if ((inStream = fopen(path.c_str(), "r+")) ==  NULL)
-    {
+    if ((inStream = fopen(path.c_str(), "r+")) ==  NULL) {
         return result;
     }
-    while (c != EOF)
-    {
+    while (c != EOF) {
         c = getc(inStream);
         if (c != EOF) ans1 += c;
     }
@@ -551,12 +436,10 @@ vector< list_bar > usr_list::build_userlist(UserRec *usr, std::string &temp)   /
         path += "eulistmid2.ans";
     else
         path += "ulistmid2.ans";
-    if ((inStream = fopen(path.c_str(), "r+")) ==  NULL)
-    {
+    if ((inStream = fopen(path.c_str(), "r+")) ==  NULL) {
         return result;
     }
-    while (c != EOF)
-    {
+    while (c != EOF) {
         c = getc(inStream);
         if (c != EOF) ans2 += c;
     }
@@ -567,12 +450,10 @@ vector< list_bar > usr_list::build_userlist(UserRec *usr, std::string &temp)   /
         path += "eulistmid3.ans";
     else
         path += "ulistmid3.ans";
-    if ((inStream = fopen(path.c_str(), "r+")) ==  NULL)
-    {
+    if ((inStream = fopen(path.c_str(), "r+")) ==  NULL) {
         return result;
     }
-    while (c != EOF)
-    {
+    while (c != EOF) {
         c = getc(inStream);
         if (c != EOF) ans3 += c;
     }
@@ -583,12 +464,10 @@ vector< list_bar > usr_list::build_userlist(UserRec *usr, std::string &temp)   /
         path += "eulistmid4.ans";
     else
         path += "ulistmid4.ans";
-    if ((inStream = fopen(path.c_str(), "r+")) ==  NULL)
-    {
+    if ((inStream = fopen(path.c_str(), "r+")) ==  NULL) {
         return result;
     }
-    while (c != EOF)
-    {
+    while (c != EOF) {
         c = getc(inStream);
         if (c != EOF) ans4 += c;
     }
@@ -600,41 +479,26 @@ vector< list_bar > usr_list::build_userlist(UserRec *usr, std::string &temp)   /
 
     ulong num_users = 0;
     ulong max_users = ulist.size();
-
-    // users   _usr; // Class
-    // UserRec urec;
-
-    //usernum = _usr.idx_count();
-    //s . errlog((char *)"build_arealist basenum   %lu", basenum);
-//    s . errlog((char *)"build_userlist max_areas %lu", max_users);
     usr->lastmsg = 0;
 
-    while(user_cnt < (signed)max_users)
-    {
+    while(user_cnt < (signed)max_users) {
 
         if (num_users == max_users) break;
         urecord = ulist[num_users];
-
-//		s . errlog((char *)"build_userlist urecord . idx %lu", urecord.idx);
 
         ++num_users;
         ++idx;
 
         ans = ans2; // Display HighLight None.
         ans = ans1; // Dispaly Lowlight None
-
         ans = ans4; // Dispaly HighLight (New Messages)
         ans = ans3; // Dispaly LowLight (New Messages)
-
-//        reset = FALSE;
+        
         temp3.erase();
 
+        for (int icnt = 0; icnt < 4; icnt++) {
 
-        for (int icnt = 0; icnt < 4; icnt++)
-        {
-
-            switch (icnt)
-            {
+            switch (icnt) {
             case 0:
                 ans = ans2;
                 break; // Display HighLight None.  ON
@@ -654,26 +518,21 @@ vector< list_bar > usr_list::build_userlist(UserRec *usr, std::string &temp)   /
 
             i = 0;
             c = 0;
-            do
-            {
+            do {
                 memset(&MCI,0,sizeof(MCI));
                 c = ans[i];
                 if (c == '\0') break;
 
                 // Check for Spacing MCI Code
-                switch (c)
-                {
+                switch (c) {
                 case '{' : // Left Justify
                     MCI[0] = ans[++i];
                     MCI[1] = ans[++i];
                     space = atoi(MCI);
 
-                    if (space != 0)
-                    {
+                    if (space != 0) {
                         foundl = TRUE;
-                    }
-                    else
-                    {
+                    } else {
                         temp3 += c;
                         temp3 += MCI;
                     }
@@ -684,12 +543,9 @@ vector< list_bar > usr_list::build_userlist(UserRec *usr, std::string &temp)   /
                     MCI[1] = ans[++i];
                     space = atoi(MCI);
 
-                    if (space != 0)
-                    {
+                    if (space != 0) {
                         foundr = TRUE;
-                    }
-                    else
-                    {
+                    } else {
                         temp3 += c;
                         temp3 += MCI;
                     }
@@ -698,86 +554,54 @@ vector< list_bar > usr_list::build_userlist(UserRec *usr, std::string &temp)   /
                 case '|' : // Pipe Codes
                     MCI[0] = ans[++i];
                     MCI[1] = ans[++i];
-                    if (strcmp(MCI,"U#") == 0)
-                    {
+                    if (strcmp(MCI,"U#") == 0) {
                         sprintf(temp2,"%i",user_cnt+1);
-                        if (foundl)
-                        {
+                        if (foundl) {
                             s.lspacing(temp2,space);
                             foundl = FALSE;
-                        }
-                        else if (foundr)
-                        {
+                        } else if (foundr) {
                             s.rspacing(temp2,space);
                             foundr = FALSE;
                         }
                         temp3 += temp2;
-                    }
-                    else if (strcmp(MCI,"UN") == 0)
-                    {
-                        sprintf(temp2,"%s",urecord . handle);
-                        if (foundl)
-                        {
+                    } else if (strcmp(MCI,"UN") == 0) {
+                        sprintf(temp2,"%s",urecord.handle);
+                        if (foundl) {
                             s.lspacing(temp2,space);
                             foundl = FALSE;
-                        }
-                        else if (foundr)
-                        {
+                        } else if (foundr) {
                             s.rspacing(temp2,space);
                             foundr = FALSE;
                         }
                         temp3 += temp2;
-                    }
-                    else if (strcmp(MCI,"NO") == 0)
-                    {
+                    } else if (strcmp(MCI,"NO") == 0) {
                         sprintf(temp2,"%s",urecord . usernote);
-                        if (foundl)
-                        {
+                        if (foundl) {
                             s.lspacing(temp2,space);
                             foundl = FALSE;
-                        }
-                        else if (foundr)
-                        {
+                        } else if (foundr) {
                             s.rspacing(temp2,space);
                             foundr = FALSE;
                         }
                         temp3 += temp2;
-                    }
-                    else if (strcmp(MCI,"LO") == 0)
-                    {
-                        sprintf(temp2,"%s",Sec2Date(urecord . dtlaston));
-                        if (foundl)
-                        {
+                    } else if (strcmp(MCI,"LO") == 0) {
+                        sprintf(temp2,"%s",Sec2Date(urecord.dtlaston).c_str());
+                        if (foundl) {
                             s.lspacing(temp2,space);
                             foundl = FALSE;
-                        }
-                        else if (foundr)
-                        {
+                        } else if (foundr) {
                             s.rspacing(temp2,space);
                             foundr = FALSE;
                         }
                         temp3 += temp2;
 
-                        /*
-                        // New Messages Setup count
-                        if (cnt == 0) { // no new
-                        	mbar.isnew = FALSE;
-                        }
-                        else {
-                        	mbar.isnew = TRUE;
-                        }*/
-
-                        //temp3 += temp2;
-                    }
-                    else
-                    {
+                    } else {
                         temp3 += c;
                         temp3 += MCI;
                     }
                     break;
 
                 case '\n' :
-                    //  temp3 += '\r';
                     break;
 
                 default :
@@ -786,12 +610,10 @@ vector< list_bar > usr_list::build_userlist(UserRec *usr, std::string &temp)   /
                 }
                 ++i;
 
-            }
-            while (c != '\0');
+            } while (c != '\0');
 
             temp3 += "\r";
-            switch (icnt)
-            {
+            switch (icnt) {
             case 0:
                 ubar . ansi_2 = temp3;
                 break; // Display HighLight None.  ON
@@ -809,46 +631,24 @@ vector< list_bar > usr_list::build_userlist(UserRec *usr, std::string &temp)   /
                 break;
             }
 
-            //result . push_back(mbar);
-            //temp += temp3;
             temp3.erase();
 
         } // End of (4) Look for each string.
-
-        /*
-        s . errlog((char *)"mbar: 1 %s",mbar . ansi_1.c_str());
-        s . errlog((char *)"mbar: 2 %s",mbar . ansi_2.c_str());
-        s . errlog((char *)"mbar: 3 %s",mbar . ansi_3.c_str());
-        s . errlog((char *)"mbar: 4 %s",mbar . ansi_4.c_str());
-
-
-        s . pipe2ansi((char *)mbar . ansi_1.c_str());
-        s . pipe2ansi((char *)mbar . ansi_2.c_str());
-        s . pipe2ansi((char *)mbar . ansi_3.c_str());
-        s . pipe2ansi((char *)mbar . ansi_4.c_str());
-        */
-        //s . startpause();
 
         result . push_back(ubar);
         temp3.erase();
 
         ++user_cnt;
-        //s . errlog((char *)"area_cnt: %i",area_cnt);
-
     }
-    // Update Clear Screen
-//    s . errlog((char *)"build_users Done!");
-//    s . errlog((char *)"Done, import - return result vector list");
+
     return result;
 }
-
 
 /*
  * UserList FullScreen - Startup UserList / If Sysop, Can Select and Edit Users
  */
 BOOL usr_list::StartUserEditor(ulong usernum)
 {
-
     logon   _logon;
     users   _users;
 
@@ -859,15 +659,11 @@ BOOL usr_list::StartUserEditor(ulong usernum)
     return TRUE;
 }
 
-
 /*
  * UserList FullScreen - Start Interface.
  */
 int usr_list::StartList(int email)
 {
-
-    /// Difference Between Area List and Users,
-    /// Areas is 1 Based, Users = 0 Based!.
     bool more        = FALSE;
     bool showmore    = FALSE;
     char mString[10] = {0};
@@ -875,8 +671,6 @@ int usr_list::StartList(int email)
     std::string _output;
     char outBuffer[1024]= {0};
 
-    // Startup Friend Classes
-    // language    _lang;
     menu_func   _mnuf;
     msg_readll  mLink;
 
@@ -891,100 +685,69 @@ int usr_list::StartList(int email)
     char text[1024]= {0};
     char sNum[3]= {0};
     std::string rBuff;
-    std::string::size_type id1 = 0; //id2,
-//    int num, num2;
+    std::string::size_type id1 = 0;
     int len;
 
     std::string tmp;
 
     // For Next / Prev Message Areas
     int CurrentPage  = 0;
-//    int PreviousPage = 0;
     int bSize        = 0;
     int boxsize      = 0;
 
     bSize = tBot - tTop;
     ++bSize;
 
-//   int Page;
-//    int Tot;
-//    int TotPages;
-
     CURRENT_ULIST = 0;
     vector<list_bar> result;
 
-//    errlog((char *)"Build UserList - UserID %lu, %lu",thisuser->idx, thisuser->handle);
-    result = build_userlist(thisuser, tmp); //, qry);
-
-    //Send the Original Message into list Buffer
-    // Draw Message Inside of Box
+    result = build_userlist(thisuser, tmp);
     mLink.GetVector(result);
 
-
     // Run through Main Reader Loop until exit from user - This Loop Probably not needed anymore.
-    while (1)
-    {
-        if (email == TRUE)
-        {
-            ParseHeader(sANSI_FILE); // Display Ansi
-        }
-        else
-        {
-            ParseHeader((char *)"ulist");    // UserList
+    while (1) {
+        if (email == TRUE) {
+            ParseHeader(sANSI_FILE);
+        } else {
+            ParseHeader((char *)"ulist");
         }
 
         boxsize =  mLink.Bot - mLink.Top;
         CurrentPage = CURRENT_ULIST / boxsize;
 
         //  Make sure we have areas.
-        if (result.size() > 0)
-        {
-            // Update Here with new user list parsing code.
-            // mLink.PutBuffer((char *)tmp.c_str(), FALSE);  // Send the Original Message into list Buffer
-//           errlog((char *)"ulbox_start usr_list");
-            mLink.box_start_vector(CurrentPage,CURRENT_ULIST);             // Draw Message Inside of Box
-        }
-        else
-        {
+        if (result.size() > 0) {
+            mLink.box_start_vector(CurrentPage,CURRENT_ULIST);
+        } else {
             return 0L;
         }
 
         tmp.erase();
-        //UserList(tmp);
         mLink.Tot = result.size();
 
-        while(1)
-        {
+        while(1) {
             _output.erase();
             _output = "|16";
             more = false;
             showmore = false;
-            //if (mLink.line_count() > 0) more = true;
-            if (mLink.Page+1 != mLink.TotPages)
-            {
+            if (mLink.Page+1 != mLink.TotPages) {
                 more = true;
             }
 
             // Show Down Arrow More!
-            if (more)
-            {
+            if (more) {
                 sprintf(outBuffer,"%s\x19",sMOREDOWN); 	// On
                 showmore = true;
-            }
-            else
-            {
+            } else {
                 sprintf(outBuffer,"%s ",sMOREDOWN);		// Off
             }
             _output += outBuffer;
 
             // Show up Arrow More
-            if (mLink.Page > 0)
-            {
+            if (mLink.Page > 0) {
                 sprintf(outBuffer,"%s\x18",sMOREUP);
                 showmore = true;
-            }
-            else
-            {
+            } else {
                 sprintf(outBuffer,"%s ",sMOREUP);
             }
             _output += outBuffer;
@@ -1005,36 +768,23 @@ int usr_list::StartList(int email)
             sprintf(outBuffer,"%s%d",sMAX_AREAS,mLink.Tot);
             _output += outBuffer;
 
-
             pipe2ansi((char *)_output.c_str());
-
-            // Blank out the previous menu so we can reload, / redraw on restart.
-            //memset(&_mnuf._premenu,0,sizeof(_mnuf._premenu));
 
             // Make Msgqp2 Prompt Optional, Use if exists!
             // Also Let user Toggle on / off
-            if (_mnuf.cmdexist(sMENU_PROMPT2,0) /*&& thisuser->msgp2*/ )
-            {
-                if ((more == TRUE) ||(mLink.Page > 1))
-                {
+            if (_mnuf.cmdexist(sMENU_PROMPT2,0)) {
+                if ((more == TRUE) ||(mLink.Page > 1)) {
                     _mnuf._curmenu.clear();
                     _mnuf._curmenu = sMENU_PROMPT2;
-                }
-                else
-                {
+                } else {
                     _mnuf._curmenu.clear();
                     _mnuf._curmenu = sMENU_PROMPT;
                 }
-            }
-            else
-            {
+            } else {
                 _mnuf._curmenu.clear();
                 _mnuf._curmenu = sMENU_PROMPT;
             }
 
-
-// user list stats won't change,
-// cut off here to re-display faster
 JMPINPUT:
 
             // Draw Input Box
@@ -1051,146 +801,86 @@ JMPINPUT:
             _mnuf.menu_proc(mString);
             ch = mString[1];
 
-            //printf("\n01. CURRENT_ULIST %i, mLink.Tot %i, mLink.Page %i, mLink.TotPages %i", CURRENT_ULIST,mLink.Tot, mLink.Page,mLink.TotPages);
             // For Menu CmdKey Input
-            if (mString[0] == '!')
-            {
-                switch (toupper(ch))
-                {
+            if (mString[0] == '!') {
+                switch (toupper(ch)) {
 
                 case 'E': //Only Sysop Can edit other users.
 
-                    if (email == FALSE && isSysop == TRUE)
-                    {
+                    if (email == FALSE && isSysop == TRUE) {
                         mLink.dispose_list();
-                        vector<list_bar>() . swap(result); // Free Vector Up.
+                        vector<list_bar>() . swap(result);
                         StartUserEditor(CURRENT_ULIST);
                         tmp.erase();
 
                         // Get and Redisplay UserList
-                        result = build_userlist(thisuser, tmp); //, qry);
+                        result = build_userlist(thisuser, tmp);
                         mLink.GetVector(result);
 
-                        ParseHeader((char *)"ulist");    // UserList
+                        ParseHeader((char *)"ulist");
                         CurrentPage = CURRENT_ULIST / boxsize;
                         mLink.box_start_vector(CurrentPage,CURRENT_ULIST);
                         break;
                     }
                     mLink.dispose_list();
-                    vector<list_bar>() . swap(result); // Free Vector Up.
+                    vector<list_bar>() . swap(result);
                     return CURRENT_ULIST;
 
                 case 'Q': // Quit
-
                     mLink.dispose_list();
-                    vector<list_bar>() . swap(result); // Free Vector Up.
-                    //_mnuf.~menu_func();
-                    return EOF; //qBuf;
+                    vector<list_bar>() . swap(result);
+                    return EOF;
                     break;
 
                 case 'U': // Page UP
-
-                    if (CurrentPage != 0)
-                    {
+                    if (CurrentPage != 0) {
                         --CurrentPage;
-
-                        // Reset Bar to first Listing on each Page.
-                        // CurrentPage = CURRENT_MAREA / boxsize;
                         CURRENT_ULIST = CurrentPage * boxsize;
-
                         mLink.box_start_vector(CurrentPage,CURRENT_ULIST);
-                    }
-                    else
+                    } else
                         goto JMPINPUT;
                     break;
 
                 case 'D': // Page Down
-
-                    if (CurrentPage != mLink.TotPages-1)
-                    {
+                    if (CurrentPage != mLink.TotPages-1) {
                         ++CurrentPage;
-
-                        // Reset Bar to first Listing on each Page.
-                        // CurrentPage = CURRENT_MAREA / boxsize;
                         CURRENT_ULIST = CurrentPage * boxsize;
-
                         mLink.box_start_vector(CurrentPage,CURRENT_ULIST);
-                    }
-                    else
+                    } else
                         goto JMPINPUT;
                     break;
 
                 case '+': // Next Area - Move Down
-
-//		                errlog((char *)"CURRENT_ULIST+1: %i. Listing: %i ", CURRENT_ULIST+1,mLink.listing.size());
                     if (CURRENT_ULIST+1 == (signed)mLink.listing.size() || (signed)mLink.listing.size() == 0)
                         goto JMPINPUT;
-
                     ++CURRENT_ULIST;
-                    //thisuser->lastmbarea = CURRENT_ULIST;
-
-//		                errlog((char *)"CurrentPage: %i. PreviousPage: %i ", CurrentPage, PreviousPage);
-//		                errlog((char *)"boxsize: %i. TotPages: %i. Page: %i ", boxsize, mLink.TotPages,  mLink.Page);
-//                    PreviousPage = CurrentPage;
-
-                    //Calculate if we go down, ++Current Area, are we on next page or not.
-                    // Becasue 0 Based, need to add +1
-                    // Test if we moved to next page.
-//						errlog((char *)"CURRENT_ULIST+1 %i < (boxsize*CurrentPage+1)+1, %i",CURRENT_ULIST+1,boxsize*(CurrentPage+1)+1);
-                    //CurrentPage = CURRENT_ULIST / boxsize;
-                    //errlog((char *)"CURRENT_ULIST+1 %i < (boxsize*CurrentPage+1)+1, %i",CURRENT_ULIST+1,boxsize*(CurrentPage+1)+1);
-                    if (CURRENT_ULIST+1 < (boxsize*(CurrentPage+1))+1)
-                    {
-                        // Still on Same Page
-
-                        if (mLink.listing[CURRENT_ULIST-1].isnew)
-                        {
-//								errlog((char *)"!!! isNEW = 'Y' 3");
-//								errlog((char *)"CURRENT_ULIST-1 %i < (boxsize*CurrentPage+1)+1, %i",CURRENT_ULIST-1,boxsize*(CurrentPage+1)+1);
-                            // Lowlight Current, then Highlight Next.
+                    if (CURRENT_ULIST+1 < (boxsize*(CurrentPage+1))+1) {
+                        if (mLink.listing[CURRENT_ULIST-1].isnew) {
                             sprintf(rBuffer, "\x1b[%i;%iH|16%s", mLink.current_selection, 1, (char *)mLink.listing[CURRENT_ULIST-1].ansi_3.c_str());
-//								errlog((char *)rBuffer);
-                        }
-                        else
-                        {
-//								errlog((char *)"!!! isNEW = 'N' 1");
-//								errlog((char *)"CURRENT_ULIST+1 %i < (boxsize*CurrentPage+1)+1, %i",CURRENT_ULIST+1,boxsize*(CurrentPage+1)+1);
-                            // Lowlight Current, then Highlight Next.
+                        } else {
                             sprintf(rBuffer, "\x1b[%i;%iH|16%s", mLink.current_selection, 1, (char *)mLink.listing[CURRENT_ULIST-1].ansi_1.c_str());
-//								errlog((char *)rBuffer);
                         }
 
                         _output += rBuffer;
                         mLink.current_selection += 1;
-                        if (mLink.listing[CURRENT_ULIST].isnew)
-                        {
-//								errlog((char *)"!!! isNEW = 'Y' 4");
+                        if (mLink.listing[CURRENT_ULIST].isnew) {
                             sprintf(rBuffer, "\x1b[%i;%iH|16%s", mLink.current_selection, 1, (char *)mLink.listing[CURRENT_ULIST].ansi_4.c_str());
-//								errlog((char *)rBuffer);
-                        }
-                        else
-                        {
-//								errlog((char *)"!!! isNEW = 'N' 2");
+                        } else {
                             sprintf(rBuffer, "\x1b[%i;%iH|16%s", mLink.current_selection, 1, (char *)mLink.listing[CURRENT_ULIST].ansi_2.c_str());
-//								errlog((char *)rBuffer);
                         }
                         _output += rBuffer;
                         pipe2ansi((char *)_output.c_str());
                         _output.erase();
                         goto JMPINPUT; //Not moving down a page.
 
-                    }
-                    else // CURRENT_ULIST+1 < (boxsize
-                    {
-                        // Move to next Page!
-//		                    errlog((char *)"DN - CURRENT_ULIST !< Move next Page");
+                    } else {
                         ++CurrentPage;
                         mLink.box_start_vector(CurrentPage,CURRENT_ULIST);
                         break;
                     }
                     break;
+                    
                 case '-': // Previous Area - Move Up
-
                     // Skipping to JMPINPUT bypasses redraws, much faster!
                     if (CURRENT_ULIST != 0)
                         --CURRENT_ULIST;
@@ -1200,95 +890,51 @@ JMPINPUT:
                     if (mLink.listing.size() == 0)
                         goto JMPINPUT;
 
-                    //thisuser->lastmbarea = CURRENT_ULIST;
-
-//				        errlog((char *)"!!! CurrentPage: %i. PreviousPage: %i ", CurrentPage, PreviousPage);
-//				        errlog((char *)"boxsize: %i. TotPages: %i. Page: %i ", boxsize, mLink.TotPages,  mLink.Page);
-//                    PreviousPage = CurrentPage;
-
-//						errlog((char *)"!!! CurrentPage: %i. PreviousPage: %i ", CurrentPage, PreviousPage);
-                    //Calculate if we go down, --Current Area, are we on next page or not.
-                    // Becasue 0 Based, need to add +1
                     // Test if we moved to next page.
-                    if (CURRENT_ULIST+1 > (boxsize*(CurrentPage)))
-                    {
-                        // Still on Same Page
-
-//		                    errlog((char *)"CURRENT_ULIST+1 %i > (boxsize*CurrentPage+1)+1, %i",CURRENT_ULIST+1, ((boxsize*CurrentPage)+1) );
-                        // Lowlight Current, then Highlight Next.
-                        if (mLink.listing[CURRENT_ULIST+1].isnew)
-                        {
-//								errlog((char *)"!!! isNEW = 'Y' 1");
+                    if (CURRENT_ULIST+1 > (boxsize*(CurrentPage))) {
+                        if (mLink.listing[CURRENT_ULIST+1].isnew) {
                             sprintf(rBuffer, "\x1b[%i;%iH|16%s", mLink.current_selection, 1, (char *)mLink.listing[CURRENT_ULIST+1].ansi_3.c_str());
-//								errlog((char *)rBuffer);
-                        }
-                        else
-                        {
-//								errlog((char *)"!!! isNEW = 'N' 3");
+                        } else {
                             sprintf(rBuffer, "\x1b[%i;%iH|16%s", mLink.current_selection, 1, (char *)mLink.listing[CURRENT_ULIST+1].ansi_1.c_str());
-//								errlog((char *)rBuffer);
                         }
 
                         _output = rBuffer;
                         mLink.current_selection -= 1;
-                        if (mLink.listing[CURRENT_ULIST].isnew)
-                        {
-//								errlog((char *)"!!! isNEW = 'Y' 4");
+                        if (mLink.listing[CURRENT_ULIST].isnew) {
                             sprintf(rBuffer, "\x1b[%i;%iH|16%s", mLink.current_selection, 1, (char *)mLink.listing[CURRENT_ULIST].ansi_4.c_str());
-//								errlog((char *)rBuffer);
-                        }
-                        else
-                        {
-//								errlog((char *)"!!! isNEW = 'N' 2");
+                        } else {
                             sprintf(rBuffer, "\x1b[%i;%iH|16%s", mLink.current_selection, 1, (char *)mLink.listing[CURRENT_ULIST].ansi_2.c_str());
-//								errlog((char *)rBuffer);
                         }
                         _output += rBuffer;
 
                         pipe2ansi((char *)_output.c_str());
                         _output.erase();
-//							errlog((char *)"CurrentPage: %i. PreviousPage: %i ", CurrentPage, PreviousPage);
-//							errlog((char *)"boxsize: %i. TotPages: %i. Page: %i ", boxsize, mLink.TotPages,  mLink.Page);
                         goto JMPINPUT; //Not moving down a page.
                         break;
-                    }
-                    else
-                    {
-                        // Move to next Page!
-//				            errlog((char *)"2!!!! UP - CURRENT_MAREA !< Move prev Page");
-//							errlog((char *)"First CurrentPage: %i. PreviousPage: %i ", CurrentPage, PreviousPage);
+                    } else {
                         --CurrentPage;
-//							errlog((char *)"Now CurrentPage: %i. PreviousPage: %i ", CurrentPage, PreviousPage);
-//				            errlog((char *)"boxsize: %i. TotPages: %i. Page: %i ", boxsize, mLink.TotPages,  mLink.Page);
-
                         mLink.box_start_vector(CurrentPage,CURRENT_ULIST);
-                        //goto JMPINPUT;
                     }
                     break;
                 default :
-                    vector<list_bar>() . swap(result); // Free Vector Up.
+                    vector<list_bar>() . swap(result);
                     tmp.erase();
-                    result = build_userlist(thisuser, tmp); //, qry);
+                    result = build_userlist(thisuser, tmp);
                     mLink.GetVector(result);
 
-                    if (email == TRUE)
-                    {
+                    if (email == TRUE) {
                         ParseHeader(sANSI_FILE); // Display Ansi
-                    }
-                    else
-                    {
-                        ParseHeader((char *)"ulist");    // UserList
+                    } else {
+                        ParseHeader((char *)"ulist");
                     }
                     CurrentPage = CURRENT_ULIST / boxsize;
                     mLink.box_start_vector(CurrentPage,CURRENT_ULIST);
                     break;
                 } // end Switch
             } // Else of [!]
-            else
-            {
+            else {
                 // Check for Digit input for selecting a user
-                if (mString[0] == '#')
-                {
+                if (mString[0] == '#') {
                     // received Digit Input From Menu Prompt
                     memset(&rBuffer,0, sizeof(rBuffer));
                     memset(&text,0, sizeof(text));
@@ -1298,14 +944,10 @@ JMPINPUT:
                     pipe2ansi(text);
                     sprintf(sNum,"%c",ch);
                     getline(rBuffer,len,sNum);
-//                    num = 0;
-//                    num2 = 0;
+                    
                     // Catch any invalid input
                     id1 = atoi(rBuffer);
-
-                    if (id1 > mLink.listing.size() || id1 < 1)
-                    {
-//				        errlog((char *)"# - Incorrect Input");
+                    if (id1 > mLink.listing.size() || id1 < 1) {
                         // Redraw input box
                         memset(&text,0, sizeof(text));
                         strcpy(text,sINPUT_BOX);
@@ -1313,76 +955,51 @@ JMPINPUT:
                         inputfield(text,len);
                         pipe2ansi(text);
                         goto JMPINPUT;
-                    }
-                    else
-                    {
-//				        errlog((char *)"# - Jump to user id1 %i",id1);
-                        //Justjump to area, then reset to page that area is in.
+                    } else {
                         CURRENT_ULIST = id1-1;
-                        //thisuser->lastmbarea = CURRENT_ULIST;
-
-                        // Jump to Current Page
                         CurrentPage = CURRENT_ULIST / boxsize;
-//				        errlog((char *)"# - Jump to user box_start_vector - CurrentPage %i, CURRENT_ULIST %i", CurrentPage,CURRENT_ULIST);
-                        if (email == TRUE)
-                        {
-                            ParseHeader(sANSI_FILE); // Display Ansi
-                        }
-                        else
-                        {
-                            ParseHeader((char *)"ulist");    // UserList
+                        if (email == TRUE) {
+                            ParseHeader(sANSI_FILE);
+                        } else {
+                            ParseHeader((char *)"ulist");
                         }
 
                         mLink.box_start_vector(CurrentPage,CURRENT_ULIST);
-
-                        //           mLink.box_start_vector(CurrentPage);
                     } // End of [#]
-                }
-                else
-                {
+                } else {
                     // For Escaped Key Input
                     startpause();
                     ch = mString[0];
-                    switch (toupper(ch))
-                    {
+                    switch (toupper(ch)) {
                     case 'A':
-                        if (CurrentPage != 0)
-                        {
+                        if (CurrentPage != 0) {
                             --CurrentPage;
-                            // Reset Bar to first Listing on each Page.
                             CURRENT_ULIST = CurrentPage * boxsize;
                             mLink.box_start_vector(CurrentPage,CURRENT_ULIST);
-                        }
-                        else
+                        } else
                             goto JMPINPUT;
                         break;
 
                     case 'B':
-                        if (CurrentPage+1 != mLink.TotPages)
-                        {
+                        if (CurrentPage+1 != mLink.TotPages) {
                             ++CurrentPage;
-                            // Reset Bar to first Listing on each Page.
                             CURRENT_ULIST = CurrentPage * boxsize;
                             mLink.box_start_vector(CurrentPage,CURRENT_ULIST);
-                        }
-                        else
+                        } else
                             goto JMPINPUT;
                         break;
 
                     default :
                         // Redraw and refresh listing.
-                        vector<list_bar>() . swap(result); // Free Vector Up.
+                        vector<list_bar>() . swap(result);
                         tmp.erase();
-                        result = build_userlist(thisuser, tmp); //, qry);
+                        result = build_userlist(thisuser, tmp);
                         mLink.GetVector(result);
 
-                        if (email == TRUE)
-                        {
-                            ParseHeader(sANSI_FILE); // Display Ansi
-                        }
-                        else
-                        {
-                            ParseHeader((char *)"ulist");    // UserList
+                        if (email == TRUE) {
+                            ParseHeader(sANSI_FILE);
+                        } else {
+                            ParseHeader((char *)"ulist");
                         }
                         CurrentPage = CURRENT_ULIST / boxsize;
                         mLink.box_start_vector(CurrentPage,CURRENT_ULIST);

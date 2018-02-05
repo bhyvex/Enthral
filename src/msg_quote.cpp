@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2004-2014 by Michael Griffin                            *
+ *   Copyright (C) 2004-2017 by Michael Griffin                            *
  *   mrmisticismo@hotmail.com                                              *
  *                                                                         *
  *   Purpose:                                                              *
@@ -12,12 +12,6 @@
  *   (at your option) any later version.                                   *
  ***************************************************************************/
 
-// Enthral SVN: $Id: msg_quote.cpp 1 2014-03-29 07:30:21Z mercyful $
-// Source: $HeadURL: file:///home/merc/repo/enthral/trunk/src/msg_quote.cpp $
-// $LastChangedDate: 2014-03-29 02:30:21 -0500 (Sat, 29 Mar 2014) $
-// $LastChangedRevision: 1 $
-// $LastChangedBy: mercyful $
-
 # include "struct.h"
 # include "msg_readll.h"
 # include "menu_func.h"
@@ -29,19 +23,17 @@
 # include <cstdio>
 # include <ctime>
 # include <cctype>
-# include <cstring> // gcc 4.3
-# include <cstdlib> // gcc 4.3
-# include <unistd.h> // gcc 4.7
+# include <cstring>
+# include <cstdlib>
+# include <unistd.h>
 
 using namespace std;
-
 
 /*
  * Message FullScreen Quoter INI - INI Exists
  */
 bool msgquote_ini::msg_exists()
 {
-
     iTop = 0;
     iBot = 0;
 
@@ -65,8 +57,7 @@ bool msgquote_ini::msg_exists()
 
     FILE *stream;
     stream = fopen(path.c_str(),"rb+");
-    if(stream == NULL)
-    {
+    if(stream == NULL) {
         perror("Error unable to read msgquote.ini, check permissions!");
         return false;
     }
@@ -79,14 +70,12 @@ bool msgquote_ini::msg_exists()
  */
 void msgquote_ini::msg_create()
 {
-
     std::string name = INIPATH;
     name += "msgquote.ini";
 
     ofstream outStream2;
     outStream2.open( name.c_str(), ofstream::out | ofstream::trunc );
-    if (!outStream2.is_open())
-    {
+    if (!outStream2.is_open()) {
         printf( "\nError Creating: %s \n", name.c_str());
         return;
     }
@@ -126,7 +115,6 @@ void msgquote_ini::msg_create()
  */
 void msgquote_ini::msg_chkpar(std::string &data)
 {
-
     std::string temp1;
     std::string::size_type st1 = 0;
     std::string::size_type st2 = 0;
@@ -147,7 +135,6 @@ void msgquote_ini::msg_chkpar(std::string &data)
  */
 void msgquote_ini::msg_check(std::string cfgdata)
 {
-
     std::string temp = cfgdata;
     int id1 = -1;
 
@@ -155,10 +142,8 @@ void msgquote_ini::msg_check(std::string cfgdata)
     if (temp[0] == '#') return;
 
     // Sets if LOGGING is on / off
-    id1 = -1;
     id1 = temp.find("set TOP ", 0);
-    if (id1 != -1)
-    {
+    if (id1 != -1) {
         msg_chkpar(temp);
         id1 = atoi(temp.c_str());
         iTop = id1;
@@ -166,10 +151,8 @@ void msgquote_ini::msg_check(std::string cfgdata)
     }
 
     // Sets Download Path
-    id1 = -1;
     id1 = temp.find("set BOT ", 0);
-    if (id1 != -1)
-    {
+    if (id1 != -1) {
         msg_chkpar(temp);
         id1 = atoi(temp.c_str());
         iBot = id1;
@@ -177,140 +160,112 @@ void msgquote_ini::msg_check(std::string cfgdata)
     }
 
     // Sets XY PAGE Num
-    id1 = -1;
     id1 = temp.find("set PAGENUM ", 0);
-    if (id1 != -1)
-    {
+    if (id1 != -1) {
         msg_chkpar(temp);
         strcpy(sPAGENUM,(char *)temp.c_str());
         return;
     }
 
     // Sets XY PAGE Num
-    id1 = -1;
     id1 = temp.find("set PAGETOTAL ", 0);
-    if (id1 != -1)
-    {
+    if (id1 != -1) {
         msg_chkpar(temp);
         strcpy(sPAGETOTAL,(char *)temp.c_str());
         return;
     }
 
     // Sets XY PAGE Num
-    id1 = -1;
     id1 = temp.find("set MOREUP ", 0);
-    if (id1 != -1)
-    {
+    if (id1 != -1) {
         msg_chkpar(temp);
         strcpy(sMOREUP,(char *)temp.c_str());
         return;
     }
 
     // Sets XY PAGE Num
-    id1 = -1;
     id1 = temp.find("set MOREUP_CHAR ", 0);
-    if (id1 != -1)
-    {
+    if (id1 != -1) {
         msg_chkpar(temp);
         strcpy(sMOREUP_CHAR,(char *)temp.c_str());
         return;
     }
 
     // Sets XY PAGE Num
-    id1 = -1;
     id1 = temp.find("set MOREDOWN ", 0);
-    if (id1 != -1)
-    {
+    if (id1 != -1) {
         msg_chkpar(temp);
         strcpy(sMOREDOWN,(char *)temp.c_str());
         return;
     }
 
     // Sets XY PAGE Num
-    id1 = -1;
     id1 = temp.find("set MOREDOWN_CHAR ", 0);
-    if (id1 != -1)
-    {
+    if (id1 != -1) {
         msg_chkpar(temp);
         strcpy(sMOREDOWN_CHAR,(char *)temp.c_str());
         return;
     }
 
     // Sets XY PAGE Num
-    id1 = -1;
     id1 = temp.find("set MOREMSG_ON ", 0);
-    if (id1 != -1)
-    {
+    if (id1 != -1) {
         msg_chkpar(temp);
         strcpy(sMOREMSG_ON,(char *)temp.c_str());
         return;
     }
 
     // Sets XY PAGE Num
-    id1 = -1;
     id1 = temp.find("set MOREMSG_WORD_ON ", 0);
-    if (id1 != -1)
-    {
+    if (id1 != -1) {
         msg_chkpar(temp);
         strcpy(sMOREMSG_WORD_ON,(char *)temp.c_str());
         return;
     }
 
-// Sets XY PAGE Num
-    id1 = -1;
+    // Sets XY PAGE Num
     id1 = temp.find("set MOREMSG_OFF ", 0);
-    if (id1 != -1)
-    {
+    if (id1 != -1) {
         msg_chkpar(temp);
         strcpy(sMOREMSG_OFF,(char *)temp.c_str());
         return;
     }
 
     // Sets XY PAGE Num
-    id1 = -1;
     id1 = temp.find("set MOREMSG_WORD_OFF ", 0);
-    if (id1 != -1)
-    {
+    if (id1 != -1) {
         msg_chkpar(temp);
         strcpy(sMOREMSG_WORD_OFF,(char *)temp.c_str());
         return;
     }
 
-    // Sets XY PAGE Num
-    id1 = -1;
+    // Sets XY PAGE Num    
     id1 = temp.find("set INPUT_BOX ", 0);
-    if (id1 != -1)
-    {
+    if (id1 != -1) {
         msg_chkpar(temp);
         strcpy(sINPUT_BOX,(char *)temp.c_str());
         return;
     }
 
     // Sets XY PAGE Num
-    id1 = -1;
     id1 = temp.find("set TEXT_COLOR ", 0);
-    if (id1 != -1)
-    {
+    if (id1 != -1) {
         msg_chkpar(temp);
         strcpy(sTEXT_COLOR,(char *)temp.c_str());
         return;
     }
 
     // Sets XY PAGE Num
-    id1 = -1;
     id1 = temp.find("set TEXT_HILIGHT ", 0);
-    if (id1 != -1)
-    {
+    if (id1 != -1) {
         msg_chkpar(temp);
         strcpy(sTEXT_HILIGHT,(char *)temp.c_str());
         return;
     }
 
     // Sets XY PAGE Num
-    id1 = -1;
     id1 = temp.find("set QUOTE_RANGE ", 0);
-    if (id1 != -1)
-    {
+    if (id1 != -1) {
         msg_chkpar(temp);
         strcpy(sQUOTE_RANGE,(char *)temp.c_str());
         return;
@@ -322,22 +277,18 @@ void msgquote_ini::msg_check(std::string cfgdata)
  */
 void msgquote_ini::msg_parse()
 {
-
     std::string name = INIPATH;
     name += "msgquote.ini";
 
     ifstream inStream;
     inStream.open( name.c_str() );
-    if (!inStream.is_open())
-    {
-        //printf("Couldn't Open Config File: %s\n", name.c_str());
+    if (!inStream.is_open()) {
         perror("Error unable to parse msgquote.ini, check permissions!");
         return;
     }
 
     std::string cfgdata;
-    for (;;)
-    {
+    for (;;) {
         getline(inStream,cfgdata);
         msg_check(cfgdata);
         if(inStream.eof()) break;
@@ -346,13 +297,11 @@ void msgquote_ini::msg_parse()
     return;
 }
 
-
 /*
  * Message FullScreen Quoter - Class
  */
 msg_quote::msg_quote()
 {
-
     tTop    = 1;
     tBot    = 1;
 }
@@ -362,62 +311,50 @@ msg_quote::msg_quote()
  */
 void msg_quote::ParseMQuote(char *filename)
 {
-
     int c = 0;
     std::string temp;
     std::string path = ANSIPATH;
     path += filename;
     path += ".ans";
-    // Get Filesize to Allocate Buffer
+
     FILE *inStream;
     std::string::size_type id1 = 0;
 
     // Open and Read Ansi file
-    if ((inStream = fopen(path.c_str(), "r+")) ==  NULL)
-    {
+    if ((inStream = fopen(path.c_str(), "r+")) ==  NULL) {
         return;
     }
 
-    char MCI[3] = {0}; // Holds MCI Codes to Parse
-    temp = "";   // Holds Ansi
-    do
-    {
+    char MCI[3] = {0};
+    temp = "";
+    
+    do {
         memset(&MCI,0,sizeof(MCI));
         c = getc(inStream);
-        if (c == '%')
-        {
+        if (c == '%') {
             MCI[0] = getc(inStream);
             MCI[1] = getc(inStream);
 
-            /* ie example...
-            if (strcmp(MCI,"TI") == 0)      { temp += mHead.time;       }
-            else if (strcmp(MCI,"FM") == 0) { temp += mHead.from;       }
-            */
             c = getc(inStream);
             if (c != EOF) temp += c;
-        }
-        else if (c == '\n') {} //temp += '\r';
-        else
-        {
+            
+        } else if (c == '\n') {} //temp += '\r';
+        else {
             if (c != EOF) temp += c;
         }
-    }
-    while (c != EOF);
+    } while (c != EOF);
     fclose(inStream);
 
     temp += "\n"; // Extra Space to Fix Next Ansi Sequence
 
-    do   // Fix, adds ESC[h - Home Cusror to Clear SCreen for Redraws.
-    {
+    // Fix, adds ESC[h - Home Cusror to Clear Screen for Redraws.
+    do { 
         id1 = temp.find("\x1b[2J",0);
-        if (id1 != std::string::npos-1)
-        {
+        if (id1 != std::string::npos-1) {
             temp.replace(id1,4,"|CS");
         }
-    }
-    while(id1 != std::string::npos);
+    } while(id1 != std::string::npos);
 
-    //write(0,(char *)temp.c_str(),temp.size());
     pipe2ansi((char *)temp.c_str());
 }
 
@@ -426,19 +363,15 @@ void msg_quote::ParseMQuote(char *filename)
  */
 void msg_quote::setup_quoter()
 {
-
-    // Do quick Message Quoter ini parsing
-    if (!msg_exists())
-    {
+    if (!msg_exists()) {
         perror("Error unable to read msgquote.ini, check permissions!");
         return;
-        //msg_create();
     }
+    
     msg_parse();
     tTop = iTop;
     tBot = iBot;
 }
-
 
 /*
  * Message FullScreen Quoter - Insert Lines into Quoters Link List.
@@ -446,8 +379,6 @@ void msg_quote::setup_quoter()
  */
 void msg_quote::insert_lines(LineRec *orgLink, msg_readll *mLink)
 {
-
-
     int count = 1;
     std::string::size_type id1 = 0, id2 = 0;
     std::string currLine;
@@ -457,73 +388,51 @@ void msg_quote::insert_lines(LineRec *orgLink, msg_readll *mLink)
 
     vector<string> newList;
 
-    if(orgLink == 0)
-    {
+    if(orgLink == 0) {
         return;
     }
 
     lineTmp = orgLink;
 
-    while ( lineTmp != 0 )
-    {
-        while (1)    // Remove any PIPE Color Codes in Quoting.
-        {
+    while ( lineTmp != 0 ) {
+        while (1) {  // Remove any PIPE Color Codes in Quoting.
             id1 = lineTmp->data.find("|", 0);
             if (id1 != std::string::npos &&
-                    isdigit(lineTmp->data[id1+1]) &&
-                    isdigit(lineTmp->data[id1+2]))
+                isdigit(lineTmp->data[id1+1]) &&
+                isdigit(lineTmp->data[id1+2]))
                 lineTmp->data.erase(id1,3);
             else
                 break;
         }
 
-        while (1)    // Remove any ANSI Color Codes
-        {
+        while (1) {  // Remove any ANSI Color Codes
             id1 = lineTmp->data.find("\x1b[", 0);
-            if (id1 != std::string::npos)
-            {
+            if (id1 != std::string::npos) {
                 id2 = lineTmp->data.find("m",id1+3);
                 lineTmp->data.erase(id1,(id2 - id1)+1);
-            }
-            else break;
+            } else break;
         }
 
-        // Add to Vecor for New Parsing.
         newList.push_back(lineTmp->data);
-
-        // Next Line
         if (lineTmp->dn_link == 0)
             break;
 
         lineTmp = lineTmp->dn_link;
     }
 
-
     newLine.erase();
     std::string qInitials;
 
-    //Loop Vecor List and Word Wrap
-for(std::string str : newList)
-    {
+    for(std::string str : newList) {
 
-        // When quoting quoted text, removing starting "> "
-        // This doesn't wrap properly.
-
-        //id1 = str.find(" II> ");  Find initial.
-
-
-        // When quoting quoted text, removing starting "> "
-        // This doesn't wrap properly.
         id1 = str.find("> ");
-        if (id1 != std::string::npos)
-        {
+        if (id1 != std::string::npos) {
             if (id1 == 0)
                 str.erase(0,2);
         }
 
         id1 = str.find(">> ");
-        if (id1 != std::string::npos)
-        {
+        if (id1 != std::string::npos) {
             if (id1 == 0)
                 str.erase(0,1);
         }
@@ -534,89 +443,68 @@ for(std::string str : newList)
         // Tripple Quoting, hey are on their Own!
 
         id1 = str.find(">",1);  // Ship First Space.
-        if (id1 != std::string::npos)
-        {
+        if (id1 != std::string::npos) {
 
-            if (str[0] == ' ' && str[1] == '>' && str[2] == '>' && str[3] == ' ')  // " >> "
-            {
+            if (str[0] == ' ' && str[1] == '>' && str[2] == '>' && str[3] == ' ') { // " >> "
                 str.erase(0,2);
             }
 
-            else if (str[0] == ' ' && str[2] == '>' && str[3] == ' ') // " I> "
-            {
+            else if (str[0] == ' ' && str[2] == '>' && str[3] == ' ') { // " I> "
                 str.erase(0,2);
             }
 
-            else if (str[0] == ' ' && str[3] == '>' && str[4] == ' ') // " IN> "
-            {
+            else if (str[0] == ' ' && str[3] == '>' && str[4] == ' ') { // " IN> "
                 str.erase(0,3);
             }
 
-            else if (str[0] == ' ' && str[3] == '>' && str[4] == '>' && str[5] == ' ') // " IN>> "
-            {
+            else if (str[0] == ' ' && str[3] == '>' && str[4] == '>' && str[5] == ' ') { // " IN>> "
                 str.erase(0,4);
             }
 
-            else if (str[0] == ' ' && str[2] == '>') // " I>"
-            {
+            else if (str[0] == ' ' && str[2] == '>') { // " I>"
                 str.erase(0,2);
             }
 
-            else if (str[0] == ' ' && str[3] == '>') // " IN>"
-            {
+            else if (str[0] == ' ' && str[3] == '>') { // " IN>"
                 str.erase(0,3);
             }
 
-            else if (str[0] == ' ' && str[1] == '>' && str[2] == ' ' && str[3] == '>' && str[4] == ' ')  // " > > "
-            {
+            else if (str[0] == ' ' && str[1] == '>' && str[2] == ' ' && str[3] == '>' && str[4] == ' ') { // " > > "
                 str.erase(0,3);
             }
 
-            else if (str[0] == ' ' && str[1] == '>' && str[2] == ' ' && str[3] == ' ' && str[4] == '>' && str[5] == ' ')  // " >  > "
-            {
+            else if (str[0] == ' ' && str[1] == '>' && str[2] == ' ' && str[3] == ' ' && str[4] == '>' && str[5] == ' ') { // " >  > "
                 str.erase(0,4);
             }
 
-            else if (str[0] == ' ' && str[1] == '>' && str[2] == ' ' && str[3] == '>' && str[4] == '>' && str[5] == ' ')  // " > >> "
-            {
+            else if (str[0] == ' ' && str[1] == '>' && str[2] == ' ' && str[3] == '>' && str[4] == '>' && str[5] == ' ') { // " > >> "
                 str.erase(0,4);
             }
 
             // Catch any that fell through.
-            if (str[0] == ' ' && str[1] == '>' && str[2] == ' ') // " > "
-            {
+            if (str[0] == ' ' && str[1] == '>' && str[2] == ' ') { // " > "
                 str.erase(0,1);
             }
-            if (str[0] == ' ' && str[1] == '>') // " >"
-            {
+            if (str[0] == ' ' && str[1] == '>') { // " >"
                 str.erase(0,1);
             }
         }
 
-        if ((signed)newLine.size() > 0)
-        {
+        if ((signed)newLine.size() > 0) {
             str = newLine + " " + str;
             newLine.erase();
         }
 
-        if ((signed)str.size() > 74)
-        {
+        if ((signed)str.size() > 74) {
             id1 = str.rfind(" ",74);
-            if (id1 != std::string::npos)
-            {
-                // Space in Line, cut at last Word
+            if (id1 != std::string::npos) {
                 mLink->add_to_list(str.substr(0,id1));
                 newLine = str.substr(id1+1);
-            }
-            else
-            {
-                // No Spaces in line, cut and wrap at 74.
+            } else {
                 mLink->add_to_list(str.substr(0,74));
                 newLine = str.substr(75);
             }
-        }
-        else
-        {
+        } else {
             mLink->add_to_list(str);
         }
 
@@ -625,8 +513,7 @@ for(std::string str : newList)
     }
 
     // If we had to copy the Last line, add a new line/
-    if ((signed)newLine.size() > 0)
-    {
+    if ((signed)newLine.size() > 0) {
         mLink->add_to_list(newLine);
         mLink->current_node->lineNum = count;
         ++count;
@@ -636,13 +523,11 @@ for(std::string str : newList)
     return;
 }
 
-
 /*
  * Message FullScreen Quoter - Parse Range and Selections
  */
 void msg_quote::par_qstring(char *rBuffer, msg_readll *mLink)
 {
-
     char cBuff2[20]= {0};
     char cBuff3[20]= {0};
     std::string rBuff;
@@ -653,20 +538,16 @@ void msg_quote::par_qstring(char *rBuffer, msg_readll *mLink)
 
     num  = 0;
     num2 = 0;
-    while (1)
-    {
+    while (1) {
         rBuff = rBuffer;
         id1   = rBuff.find("-",0);
         id2   = rBuff.find(",",0);
-        // Check if Range and Single Line Selection Are both Present
+
         if (id1 != std::string::npos &&
-                id2 != std::string::npos)
-        {
-            // Chop up String between each ',' char... then process seperatly.
+            id2 != std::string::npos) {
             num2 = id2;
             memset(&cBuff2,0, sizeof(cBuff2));
-            for (int i = 0; i != (signed)id2; i++)
-            {
+            for (int i = 0; i != (signed)id2; i++) {
                 cBuff2[i] = rBuffer[i];
             }
 
@@ -680,45 +561,35 @@ void msg_quote::par_qstring(char *rBuffer, msg_readll *mLink)
             id2 = rBuff.find(",",0);
             strcpy (cBuff3,cBuff2);
 
-            if (id1 != std::string::npos)    // Range ie 1-2
-            {
+            if (id1 != std::string::npos) {  // Range ie 1-2
                 num = id1;
                 memset(&cBuff2,0, sizeof(cBuff2));
-                for (int i = 0; i != (signed)num; i++)
-                {
+                for (int i = 0; i != (signed)num; i++) {
                     cBuff2[i] = cBuff3[i];
                 }
                 id1 = atoi(cBuff2);
                 if ((signed)id1 > mLink->Tot || (signed)id1 == 0) break;
                 memset(&cBuff2,0, sizeof(cBuff2));
-                for (int i = 0; cBuff3[num+1] != '\0'; i++)
-                {
+                for (int i = 0; cBuff3[num+1] != '\0'; i++) {
                     ++num;
                     cBuff2[i] = cBuff3[num];
                 }
 
                 id2 = atoi(cBuff2);
                 if ((signed)id2 > mLink->Tot || id2 < id1) break;
-                for (int i = id1; i != (signed)id2+1; i++)
-                {
+                for (int i = id1; i != (signed)id2+1; i++) {
                     mLink->flag_line(i);
                 }
-            }
-            else    // Else single Digit
-            {
+            } else { // Else single Digit
                 id1 = atoi(cBuff3);
                 if ((signed)id1 > mLink->Tot || (signed)id1 == 0) break;
                 mLink->flag_line(id1);
             }
-            // Done, Loop Though and Process next part of Original String.
         }
-        // Then check if only Range ... 1-6 - Working!
-        else if (id1 != std::string::npos)   // id1 = '-' Position
-        {
+        else if (id1 != std::string::npos) { // id1 = '-' Position
             num = id1;
             memset(&cBuff2,0, sizeof(cBuff2));
-            for (int i = 0; i != (signed)num; i++)
-            {
+            for (int i = 0; i != (signed)num; i++) {
                 cBuff2[i] = rBuffer[i];
             }
 
@@ -726,8 +597,7 @@ void msg_quote::par_qstring(char *rBuffer, msg_readll *mLink)
             if ((signed)id1 > mLink->Tot || (signed)id1 == 0) break;
 
             memset(&cBuff2,0, sizeof(cBuff2));
-            for (int i = 0; rBuffer[num+1] != '\0'; i++)
-            {
+            for (int i = 0; rBuffer[num+1] != '\0'; i++) {
                 ++num;
                 cBuff2[i] = rBuffer[num];
             }
@@ -735,28 +605,23 @@ void msg_quote::par_qstring(char *rBuffer, msg_readll *mLink)
             id2 = atoi(cBuff2);
             if ((signed)id2 > mLink->Tot || id2 < id1) break;
 
-            for (int i = id1; i != (signed)id2+1; i++)
-            {
+            for (int i = id1; i != (signed)id2+1; i++) {
                 mLink->flag_line(i);
             }
             break;
         }
-        // Then check if only Selections 1,6 - Working!
-        else if (id2 != std::string::npos)     // id2 = ',' Position
-        {
+        else if (id2 != std::string::npos) {   // id2 = ',' Position
             num2 = id2;
             num  = id2;
             memset(&cBuff2,0, sizeof(cBuff2));
-            for (int i = 0; i != (signed)num; i++)
-            {
+            for (int i = 0; i != (signed)num; i++) {
                 cBuff2[i] = rBuffer[i];
             }
             id1 = atoi(cBuff2);
 
             // Erase Char then comma from original and cntinue, ie: 2,
             id2 = rBuff.find(",",0);
-            if (id2 != std::string::npos)
-            {
+            if (id2 != std::string::npos) {
                 rBuff.erase(0,id2+1);
                 strcpy(rBuffer,rBuff.c_str());
             }
@@ -764,9 +629,7 @@ void msg_quote::par_qstring(char *rBuffer, msg_readll *mLink)
             if ((signed)id1 > mLink->Tot || (signed)id1 == 0) break;
             mLink->flag_line(id1);
             if (id2 == std::string::npos)  break;
-        }
-        else   // Single Digit Left Over. & Done
-        {
+        } else { // Single Digit Left Over. & Done
             id1 = atoi(rBuffer);
             if ((signed)id1 > mLink->Tot || (signed)id1 == 0) return;
             mLink->flag_line(id1);
@@ -780,7 +643,6 @@ void msg_quote::par_qstring(char *rBuffer, msg_readll *mLink)
  */
 void msg_quote::StartQuoter(LineRec *orgLink, std::string &retbuf)
 {
-
     bool more        = false;
     bool showmore    = false;
     char mString[10] = {0};
@@ -788,7 +650,6 @@ void msg_quote::StartQuoter(LineRec *orgLink, std::string &retbuf)
     std::string _output;
     char outBuffer[1024] = {0};
 
-    // Startup Message Reader Link List for Holding Message Lines
     menu_func   _mnuf; // Menu System for Lightbars
     msg_readll  mLink; // Link List for Holding Message Quote Data
 
@@ -806,55 +667,34 @@ void msg_quote::StartQuoter(LineRec *orgLink, std::string &retbuf)
     std::string::size_type id1 = 0, id2 = 0;
     int len;
 
-    // Quote Buffer to return to FSE.
-    // We Return
-    //static char qBuf[BUFLEN];
-    //memset(&qBuf,0,BUFLEN);
-
     std::string qbuf;
     qbuf.erase();
-
-
-    //errlog2((char *)" &&& Start Quote!");
-    insert_lines(orgLink,&mLink);   // Take Original List and Copy it to Message Quoter
-    //mLink.line_total();
-
-    //errlog2((char *)" &&& Start Quote 2 !");
+    insert_lines(orgLink,&mLink);
 
     // Run through Main Reader Loop until exit from user - This Loop Probably not needed anymore.
-    while (1)
-    {
-        // Setup a new Message Quoter ansi
+    while (1) {
         ansiPrintf((char *)"mquote");
         mLink.box_refresh(CURRENT_MAREA); // So Always Displayed Highlighting on Current Page!
 
-        while(1)
-        {
+        while(1) {
             _output = "";
             more = false;
             showmore = false;
             if (mLink.Page != mLink.TotPages) more = true;
-            /*-------------------------------------------------------*/
-            // Show Down Arrow More!
-            if (more)
-            {
+
+            if (more) {
                 sprintf(outBuffer,"%s\x19",sMOREDOWN);  // On
                 showmore = true;
-            }
-            else
-            {
+            } else {
                 sprintf(outBuffer,"%s ",sMOREDOWN);     // Off
             }
             _output += outBuffer;
 
             // Show up Arrow More
-            if (mLink.Page > 1)
-            {
+            if (mLink.Page > 1) {
                 sprintf(outBuffer,"%s\x18",sMOREUP);
                 showmore = true;
-            }
-            else
-            {
+            } else {
                 sprintf(outBuffer,"%s ",sMOREUP);
             }
             _output += outBuffer;
@@ -870,55 +710,39 @@ void msg_quote::StartQuoter(LineRec *orgLink, std::string &retbuf)
             _output += outBuffer;
             sprintf(outBuffer,"%s%.2d",sPAGETOTAL,mLink.TotPages);
             _output += outBuffer;
+
             // Max Quote Range
             sprintf(outBuffer,"%s%d",sQUOTE_RANGE,mLink.Tot);
             _output += outBuffer;
-            /*-------------------------------------------------------*/
-            pipe2ansi((char *)_output.c_str());
-            // If more, Select Menu Prompt with PGDN as Default
-            // Otherwise Select Prompt with Next as Default!
 
-            // Make Msgqp2 Prompt Optional, Use if exists!
-            // Also Let user Toggle on / off
+            pipe2ansi((char *)_output.c_str());
+
             _mnuf._premenu.clear();
             _mnuf._premenu = _mnuf._curmenu;
-            if (_mnuf.cmdexist((char *)"msg_qprompt2",0) /*&& thisuser->msgp2*/ )
-            {
-                if (more || mLink.Page > 1)
-                {
+            if (_mnuf.cmdexist((char *)"msg_qprompt2",0)) {
+                if (more || mLink.Page > 1) {
                     _mnuf._curmenu.clear();
                     _mnuf._curmenu = "msg_qprompt2";
-                }
-                else
-                {
+                } else {
                     _mnuf._curmenu.clear();
                     _mnuf._curmenu = "msg_qprompt";
                 }
-            }
-            else
-            {
+            } else {
                 _mnuf._curmenu.clear();
                 _mnuf._curmenu = "msg_qprompt";
             }
 
-            // Readin the Menu Prompt
             _mnuf.menu_readin();
-            // Process Messeage Promt with lightbar menu
             _mnuf.menu_proc(mString);
-            // Process Return Input from Lightbars, Next, Prev, Quit ...
-            //mString[0] should = !
             ch = mString[1];
 
             // For Menu CmdKey Input
             if (mString[0] == '!')
-                switch (toupper(ch))
-                {
+                switch (toupper(ch)) {
 
                 case 'Q': // Quit Message Reading
-                    //strcpy(qBuf,mLink.GetBuffer());
                     mLink.GetBuffer(retbuf);
                     mLink.dispose_list();
-                    //_mnuf.~menu_func();
                     return;
 
                 case 'U': // Page UP
@@ -933,28 +757,23 @@ void msg_quote::StartQuoter(LineRec *orgLink, std::string &retbuf)
                     ansiPrintf((char *)"mreadhlp");
                     getkey(true);
                     ansiPrintf((char *)"mquote");
-                    //mLink.box_refresh();
                     mLink.box_overdraw(CURRENT_MAREA);
                     break;
 
                 case 'A': // Select all Text To Quote
                     mLink.select_all();
-                    //mLink.box_refresh();
                     mLink.box_overdraw(CURRENT_MAREA);
                     break;
 
                 case 'C': // Clear All Quoted Text.
                     mLink.clear_all();
-                    //mLink.box_refresh();
                     mLink.box_overdraw(CURRENT_MAREA);
                     break;
 
                 default :
                     break;
                 } // end of case
-            else if (mString[0] == '#')
-            {
-                // received Digist Input From Menu Prompt, Start Input for Quoting Text!
+            else if (mString[0] == '#') {
                 memset(&rBuffer,0, sizeof(rBuffer));
                 memset(&text,0, sizeof(text));
                 strcpy(text,sINPUT_BOX);
@@ -966,17 +785,13 @@ void msg_quote::StartQuoter(LineRec *orgLink, std::string &retbuf)
                 getline(rBuffer,len,sNum,FALSE,(char *)"1234567890,-");
 
                 rBuff = rBuffer;
-                // For # & ENTER, Then DIGIT & ENTER Again.
                 id1 = rBuff.find("-",0);
                 id2 = rBuff.find(",",0);
 
-                // If a Single #, Check if Valid
                 if (id1 == std::string::npos &&
-                        id2 == std::string::npos)
-                {
+                    id2 == std::string::npos) {
                     id1 = atol(rBuffer);
-                    if ((signed)id1 > mLink.Tot || (signed)id1 == 0 || strlen(rBuffer) > 3)
-                    {
+                    if ((signed)id1 > mLink.Tot || (signed)id1 == 0 || strlen(rBuffer) > 3) {
                         ansiPrintf((char *)"mquote");
                         mLink.box_refresh(CURRENT_MAREA);
                         break;
@@ -984,15 +799,11 @@ void msg_quote::StartQuoter(LineRec *orgLink, std::string &retbuf)
                 }
 
                 // Remove any invalid junk at the end,
-                while (1)
-                {
-                    if (rBuff[rBuff.size()-1] == '-' || rBuff[rBuff.size()-1] == ',')
-                    {
+                while (1) {
+                    if (rBuff[rBuff.size()-1] == '-' || rBuff[rBuff.size()-1] == ',') {
                         rBuff.erase(rBuff.size()-1,1);
                         sprintf(rBuffer,"%s",(char *)rBuff.c_str());
-                    }
-                    else
-                    {
+                    } else {
                         break;
                     }
                 }
@@ -1000,20 +811,14 @@ void msg_quote::StartQuoter(LineRec *orgLink, std::string &retbuf)
                 // Chop Up and Test Quote Flaging String.
                 par_qstring(rBuffer,&mLink);
                 break;
-            }
-            else    // For Escaped Key Input
-            {
+            } else { // For Escaped Key Input
                 ch = mString[0];
-                switch (toupper(ch))
-                {
+                switch (toupper(ch)) {
                 case 'A':
-                    // Scroll Up 1 Line ( forced to paeg up / down for now)
-                    // Don't care much for single scrolling, anoying online!
-                    // Page is much nicer and faster ;)
                     mLink.box_pgup();
                     break;
 
-                case 'B': // Scroll down 1 Line ( forced to paeg up / down for now)
+                case 'B':
                     mLink.box_pgdn();
                     break;
 
@@ -1024,6 +829,3 @@ void msg_quote::StartQuoter(LineRec *orgLink, std::string &retbuf)
         }
     }
 }
-
-
-

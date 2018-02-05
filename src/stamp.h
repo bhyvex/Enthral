@@ -1,13 +1,6 @@
 #ifndef __STAMP_H__
 #define __STAMP_H__
 
-// Enthral SVN: $Id: stamp.h 1 2014-03-29 07:30:21Z mercyful $
-// Source: $HeadURL: file:///home/merc/repo/enthral/trunk/src/stamp.h $
-// $LastChangedDate: 2014-03-29 02:30:21 -0500 (Sat, 29 Mar 2014) $
-// $LastChangedRevision: 1 $
-// $LastChangedBy: mercyful $
-
-
 typedef unsigned bits;
 
 #ifndef SASC
@@ -41,18 +34,15 @@ typedef signed long slong;
 
 /* DOS-style datestamp */
 
-struct _stamp
-{
-    struct
-    {
+struct _stamp {
+    struct {
         bits da:5;
         bits mo:4;
         bits yr:7;
     }
     date;
 
-    struct
-    {
+    struct {
         bits ss:5;
         bits mm:6;
         bits hh:5;
@@ -60,16 +50,14 @@ struct _stamp
     time;
 };
 
-struct _dos_st
-{
+struct _dos_st {
     word date;
     word time;
 };
 
 /* Union so we can access stamp as "int" or by individual components */
 
-union stamp_combo
-{
+union stamp_combo {
     dword ldate;
     struct _stamp msg_st;
     struct _dos_st dos_st;

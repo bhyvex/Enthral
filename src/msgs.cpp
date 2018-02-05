@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2004-2014 by Michael Griffin                            *
+ *   Copyright (C) 2004-2017 by Michael Griffin                            *
  *   mrmisticismo@hotmail.com                                              *
  *                                                                         *
  *   Purpose: Some Basic Message I/O Fuctions                              *
@@ -12,12 +12,6 @@
  *   (at your option) any later version.                                   *
  ***************************************************************************/
 
-// Enthral SVN: $Id: msgs.cpp 1 2014-03-29 07:30:21Z mercyful $
-// Source: $HeadURL: file:///home/merc/repo/enthral/trunk/src/msgs.cpp $
-// $LastChangedDate: 2014-03-29 02:30:21 -0500 (Sat, 29 Mar 2014) $
-// $LastChangedRevision: 1 $
-// $LastChangedBy: mercyful $
-
 # include "struct.h"
 # include "mb_api.h"
 # include "mb_jam.h"
@@ -28,95 +22,36 @@
 # include "msg_area.h"
 
 # include <cstdio>
-# include <cstring>  // gcc 4.3
-# include <cstdlib>  // gcc 4.3
-# include <unistd.h> // gcc 4.7
+# include <cstring>
+# include <cstdlib>
+# include <unistd.h>
 
 # include <string>
 
 using namespace std;
-
-/*
-int msgs::read_emaillist(EmailIdx *em, int recno)
-{
-
-    int x = 0;
-    std::string path = DATAPATH;
-    path += "email.dat";
-
-    FILE *fptr = fopen(path.c_str(),"rb+");
-    if(fptr == NULL)
-    {
-        fptr = fopen(path.c_str(), "wb");
-        if(fptr == NULL)
-        {
-            perror("Error unable to read email.dat, check permissions!");
-            return x;
-        }
-    }
-
-    if(fseek(fptr,(int)recno*sizeof(EmailIdx),SEEK_SET)==0)
-        x=fread(em,sizeof(EmailIdx),1,fptr);
-
-    fclose(fptr);
-    return(x);
-}
-
-int msgs::save_emaillist(EmailIdx *em, int recno)
-{
-
-    std::string path = DATAPATH;
-    path += "email.dat";
-
-    int x = 0;
-    FILE *stream = fopen(path.c_str(),"rb+");
-    if(stream == NULL)
-    {
-        stream = fopen(path.c_str(), "wb");
-        if(stream == NULL)
-        {
-            perror("Error unable to write email.dat, check permissions!");
-            return x;
-        }
-    }
-    if(fseek(stream,(int)recno*sizeof(EmailIdx),SEEK_SET)==0)
-        x = fwrite(em,sizeof(EmailIdx),1,stream);
-    fclose(stream);
-    return x;
-}
-*/
 
 /**
  * Message Area File - Lock File
  */
 int msgs::mbaselist_lockSet(int onoff)
 {
-
-
     std::string path = LOCKPATH;
     path += "msgforums.lck";
 
-    if (!onoff)
-    {
+    if (!onoff) {
         remove((char *)path.c_str());
         return TRUE;
     }
 
-    //While lock file missing, create, or loop until it disapears.
     FILE *stream;
-    while(1)
-    {
+    while(1) {
         stream = fopen(path.c_str(),"rb+");
-        if(stream == NULL)
-        {
+        if(stream == NULL) {
             stream = fopen(path.c_str(), "wb");
-            if(stream == NULL)
-            {
+            if(stream == NULL) {
                 printf("Error msgforums.lck!");
                 return FALSE;
-            }
-            else
-            {
+            } else {
                 fclose(stream);
                 return TRUE;
             }
@@ -138,11 +73,9 @@ int msgs::read_mbaselist(mb_list_rec *mr, int rec)
 
     mbaselist_lockSet(TRUE);
     FILE *fptr = fopen(path.c_str(),"rb+");
-    if(fptr == NULL)
-    {
+    if(fptr == NULL) {
         fptr = fopen(path.c_str(), "wb");
-        if(fptr == NULL)
-        {
+        if(fptr == NULL) {
             perror("Error unable to read msgforums.dat, check permissions!");
             mbaselist_lockSet(FALSE);
             return x;
@@ -156,7 +89,6 @@ int msgs::read_mbaselist(mb_list_rec *mr, int rec)
     mbaselist_lockSet(FALSE);
     return(x);
 }
-
 
 /**
  * Message Area File - Temp Holder When removing
@@ -172,11 +104,9 @@ int msgs::save_mbasetemp(mb_list_rec *mr, int rec)
 
     mbaselist_lockSet(TRUE);
     fptr=fopen(path.c_str(),"rb+");
-    if(fptr==NULL)
-    {
+    if(fptr==NULL) {
         fptr=fopen(path.c_str(),"wb");
-        if(fptr==NULL)
-        {
+        if(fptr==NULL) {
             perror("Error unable to write msgforums.tmp, check permissions!");
             mbaselist_lockSet(FALSE);
             return x;
@@ -191,7 +121,6 @@ int msgs::save_mbasetemp(mb_list_rec *mr, int rec)
     return(x);
 }
 
-
 /**
  * Message Area File - Save Message Area
  */
@@ -204,11 +133,9 @@ int msgs::save_mbaselist(mb_list_rec *mr, int rec)
     mbaselist_lockSet(TRUE);
     int x = 0;
     FILE *stream = fopen(path.c_str(),"rb+");
-    if(stream == NULL)
-    {
+    if(stream == NULL) {
         stream = fopen(path.c_str(), "wb");
-        if(stream == NULL)
-        {
+        if(stream == NULL) {
             perror("Error unable to write msgforums.dat, check permissions!");
             mbaselist_lockSet(FALSE);
             return x;
@@ -221,18 +148,15 @@ int msgs::save_mbaselist(mb_list_rec *mr, int rec)
     return x;
 }
 
-
 /**
  * Message Area File - Count Message Areas
  */
 int msgs::msg_count()
 {
-
     int i = 0;
     mb_list_rec mb;
 
-    while(read_mbaselist(&mb,i))
-    {
+    while(read_mbaselist(&mb,i)) {
         ++i;
     }
     ++i;
@@ -247,14 +171,12 @@ int msgs::msg_count()
  */
 int msgs::msg_find(char *tfile)
 {
-
     string temp1, temp2;
     mb_list_rec mb;
     temp1 = (tfile);
 
     int idx = 0;
-    while(read_mbaselist(&mb,idx))
-    {
+    while(read_mbaselist(&mb,idx)) {
         temp2 = (char *)(mb.mbfile);
         if(temp1 == temp2) return(idx);
         idx++;
@@ -267,33 +189,25 @@ int msgs::msg_find(char *tfile)
  */
 int msgs::jlr_lockSet(int onoff)
 {
-
     std::string path = LOCKPATH;
     path += "ljr.lck";
 
-    if (!onoff)
-    {
+    if (!onoff) {
         remove((char *)path.c_str());
         return TRUE;
     }
 
-    //While lock file missing, loop untill it disapears.
     FILE *stream;
-    while(1)
-    {
+    while(1) {
         stream = fopen(path.c_str(),"rb+");
-        if(stream == NULL)     // Lock File Missing
-        {
+        if(stream == NULL) {   // Lock File Missing
             stream = fopen(path.c_str(), "wb");
-            if(stream == NULL)
-            {
+            if(stream == NULL) {
                 printf("Error jlr.lck!");
                 return FALSE;
-            }
-            else
-            {
+            } else {
                 fclose(stream);
-                return TRUE;    // Created Lock File
+                return TRUE;
             }
         }
         fclose(stream);
@@ -306,9 +220,7 @@ int msgs::jlr_lockSet(int onoff)
  */
 int msgs::readlr(LastRead *lr, int idx, mb_list_rec *mb)
 {
-
     char path[1024]= {0};
-    //printf("%s%s.jlr", mb->mbpath, mb->mbfile);
     sprintf(path,"%s%s.jlr2", MESGPATH, (char *)mb->mbfile);
     jlr_lockSet(TRUE);
 
@@ -316,12 +228,10 @@ int msgs::readlr(LastRead *lr, int idx, mb_list_rec *mb)
     FILE *stream;
 
     stream = fopen(path,"rb+");
-    if(stream == NULL)
-    {
+    if(stream == NULL) {
         jlr_lockSet(FALSE);
         return (0);
-    }
-    else fclose(stream);
+    } else fclose(stream);
 
     stream = fopen(path, "rb");
     if(fseek(stream,(int)idx*sizeof(LastRead),SEEK_SET)==0)
@@ -336,7 +246,6 @@ int msgs::readlr(LastRead *lr, int idx, mb_list_rec *mb)
  */
 int msgs::writelr(LastRead *lr, int idx, mb_list_rec *mb)
 {
-
     char path[1024]= {0};
     sprintf(path,"%s%s.jlr2", MESGPATH, (char *)mb->mbfile);
     jlr_lockSet(TRUE);
@@ -345,11 +254,9 @@ int msgs::writelr(LastRead *lr, int idx, mb_list_rec *mb)
     int x = 0;
 
     stream=fopen(path,"rb+");
-    if(stream == NULL)
-    {
+    if(stream == NULL) {
         stream=fopen(path, "wb");
-        if(stream == NULL)
-        {
+        if(stream == NULL) {
             write(0,path,sizeof(path));
             jlr_lockSet(FALSE);
             sleep(3);
@@ -371,14 +278,12 @@ int msgs::writelr(LastRead *lr, int idx, mb_list_rec *mb)
  */
 ulong msgs::JamAreaGetLast(long usernum, mb_list_rec *mb)
 {
-
-    SESSION _s;
+    ConsoleIO _s;
 
     LastRead lr;
     memset(&lr,0,sizeof(LastRead));
 
-    if (!readlr(&lr,usernum,mb))
-    {
+    if (!readlr(&lr,usernum,mb)) {
         return 0;
     }
 
@@ -386,8 +291,7 @@ ulong msgs::JamAreaGetLast(long usernum, mb_list_rec *mb)
     // We verify the CRC32 value of the MSGID to make sure.
     std::string tmp;
     unsigned long crcvalue = (ulong)jamapi_readmsgid(mb,lr.RepID,tmp);
-    if (lr.MsgID == crcvalue)
-    {
+    if (lr.MsgID == crcvalue) {
         return (lr.RepID);
     }
 
@@ -395,43 +299,28 @@ ulong msgs::JamAreaGetLast(long usernum, mb_list_rec *mb)
     // Returns 0L for Nuttin, or Message Number of Matching MsgID.
     unsigned long ret;
     ret = buildmsgid(lr.MsgID,mb);
-    if (ret != 0) ++ret; // When we set, we minus 1, add it back now.
+    if (ret != 0) ++ret;
 
     return (ret);
 }
 
-
 /**
  * Set is now done by MSGID, it's universal and unique, and holds better
  * If not found, default checks last Message Number as a backup.
- *  Forget.. ?!?! :-)
- */
+  */
 void msgs::JamAreaSetLast(long usernum, long msgnum, mb_list_rec *mb)
 {
-    // Consider this branched off seperate,
-    // Now we need take the currnet message_index
-    // then we need to get the header with the MSGID.
-    // we then save the msgid that will be in crc32 into lr. MsgID
-
     LastRead lr;
     memset(&lr,0,sizeof(LastRead));
 
     std::string tmp;
 
-    //	Get msg id..
-    //	Header_S.MsgIdCRC=JAM_Crc32(buf,strlen((char *)buf));
-
-    lr.RepID = msgnum; //original message # (Quick Searches)
+    lr.RepID = msgnum;
     lr.MsgID = (ulong)jamapi_readmsgid(mb, msgnum, tmp);
 
-
-    if (!writelr(&lr,usernum,mb))
-    {
-        //	_s.errlog((char *)"JamAreaSetLast: lr.RepID CRC32 (%lu) lr.MsgID CRC32 (%lu)",lr.RepID,lr.MsgID);
+    if (!writelr(&lr,usernum,mb)) {
     }
 }
-
-
 
 /**
  * Read Area and get Count of Total Messages
@@ -446,11 +335,8 @@ unsigned long msgs::CountMsgs(unsigned long mbnum, UserRec *usr)
     // Get Public/Private status of currnet area
     read_mbaselist(&mb, mbnum);
 
-    // This procedure uses ja->active as real true count of total
-    // Live messages per area.
     return jamapi_countmsgs(&mb, usr);
 }
-
 
 /**
  * Count new message from Area passed.
@@ -458,8 +344,7 @@ unsigned long msgs::CountMsgs(unsigned long mbnum, UserRec *usr)
  */
 unsigned long msgs::CountNewMsgs(unsigned long mbnum, UserRec *usr)
 {
-
-    SESSION       s(usr); // Pass User Incase there are MCI Codes for User Info.
+    ConsoleIO s(usr);
 
     mb_list_rec mr;
 
@@ -471,21 +356,18 @@ unsigned long msgs::CountNewMsgs(unsigned long mbnum, UserRec *usr)
 
     unsigned long lastread = JamAreaGetLast(usr->idx, &mr);
 
-//	s.errlog2((char *)"CountNewMessages() mbnum %lu, msgcnt %lu, lastread %lu ",mbnum, msgcnt, lastread);
-
     // No New Messages
     if (lastread >= msgcnt || msgcnt == 0)
         return 0;
 
     // Last Read is Index of eList[] Array 0 Based.
     // Incriment 1 so we can subtract from total messages, not Zero Based.
-    if (lastread < msgcnt)
-    {
+    if (lastread < msgcnt) {
         return (msgcnt - lastread);
     }
+    
     return 0;
 }
-
 
 /**
  * Counts New Mesages for All Areas (Includes Email)
@@ -493,7 +375,6 @@ unsigned long msgs::CountNewMsgs(unsigned long mbnum, UserRec *usr)
  */
 unsigned long msgs::CountAllNewMsgs(UserRec *usr)
 {
-
     ulong counter = 1;
     ulong msgcnt  = 0;
 
@@ -502,15 +383,13 @@ unsigned long msgs::CountAllNewMsgs(UserRec *usr)
     mb_list_rec   mb;
     memset(&mb,0,sizeof(mb_list_rec));
 
-    while(read_mbaselist(&mb, counter))
-    {
+    while(read_mbaselist(&mb, counter)) {
         msgcnt += CountNewMsgs(counter, usr);
         ++counter;
     }
 
     return(msgcnt);
 }
-
 
 /**
  * New User, Reset all Last Reads Pointers to 0
@@ -522,10 +401,8 @@ void msgs::resetlastread(UserRec *usr)
     mb_list_rec mb;
     memset(&mb,0,sizeof(mb_list_rec));
 
-    while(read_mbaselist(&mb,i))
-    {
+    while(read_mbaselist(&mb,i)) {
         JamAreaSetLast(usr->idx, 0, &mb);
         ++i;
     }
 }
-

@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2004-2014 by Michael Griffin                            *
+ *   Copyright (C) 2004-2017 by Michael Griffin                            *
  *   mrmisticismo@hotmail.com                                              *
  *                                                                         *
  *   Purpose: Working on IPC Node Chat                                     *
@@ -12,45 +12,29 @@
  *   (at your option) any later version.                                   *
  ***************************************************************************/
 
-// Enthral SVN: $Id: console.cpp 1 2014-03-29 07:30:21Z mercyful $
-// Source: $HeadURL: file:///home/merc/repo/enthral/trunk/src/console.cpp $
-// $LastChangedDate: 2014-03-29 02:30:21 -0500 (Sat, 29 Mar 2014) $
-// $LastChangedRevision: 1 $
-// $LastChangedBy: mercyful $
-
 #include "console.h"
 #include "struct.h"
 
 #include <cstdio>
 #include <cstdlib>
 
-
 #include <errno.h>
 #include <fcntl.h>
 #include <signal.h>
 
-
-#include <sys/types.h>  //mkfifo gcc 3.x
-#include <sys/stat.h>   //mkfifo gcc 3.x
-
+#include <sys/types.h> 
+#include <sys/stat.h>
 #include <sys/socket.h>
 #include <sys/un.h>
-
-//#include <unistd.h>
-//#include <syslog.h>
-//#include <sys/ioctl.h>
 #include <termios.h>
-//#include <sys/wait.h>
 
-// Unicode Output Encoding.
-#include <iostream> // cout
-#include <clocale>  // locale
-#include <cwchar>   // wchar_t wide characters
-#include <string>   // string and wstring
-#include <fstream>  // ifstream file streams.
+#include <iostream>
+#include <clocale>
+#include <cwchar>
+#include <string>
+#include <fstream>
 
 std::string screen_buffer;
-
 
 /**
  * Wijnand Modderman-Lenstra
@@ -66,13 +50,12 @@ std::string screen_buffer;
  * 27 is mapped to ESC  Excluded 'Left Arrow'
  * -- Micahel Griffin
  */
-wchar_t CP437TABLE[] =
-{
-    L'\u0000', L'\u263A', L'\u263B', L'\u2665', L'\u2666', L'\u2663', // 5
-    L'\u2660', L'\u2022', L'\u0008', L'\u0009', L'\u000A', L'\u2642', // 11
-    L'\u2640', L'\u000D', L'\u266C', L'\u263C', L'\u25BA', L'\u25C4', // 17
-    L'\u2195', L'\u203C', L'\u00B6', L'\u00A7', L'\u25AC', L'\u21A8', // 23
-    L'\u2191', L'\u2193', L'\u2192', L'\u001B', L'\u221F', L'\u2194', // 29
+wchar_t CP437TABLE[] = {
+    L'\u0000', L'\u263A', L'\u263B', L'\u2665', L'\u2666', L'\u2663',
+    L'\u2660', L'\u2022', L'\u0008', L'\u0009', L'\u000A', L'\u2642',
+    L'\u2640', L'\u000D', L'\u266C', L'\u263C', L'\u25BA', L'\u25C4',
+    L'\u2195', L'\u203C', L'\u00B6', L'\u00A7', L'\u25AC', L'\u21A8',
+    L'\u2191', L'\u2193', L'\u2192', L'\u001B', L'\u221F', L'\u2194',
     L'\u25B2', L'\u25BC', L'\u0020', L'\u0021', L'\u0022', L'\u0023',
     L'\u0024', L'\u0025', L'\u0026', L'\u0027', L'\u0028', L'\u0029',
     L'\u002A', L'\u002B', L'\u002C', L'\u002D', L'\u002E', L'\u002F',
@@ -113,7 +96,6 @@ wchar_t CP437TABLE[] =
     L'\u207F', L'\u00B2', L'\u25A0', L'\u00A0'
 };
 
-
 static int conin = 0;
 static int conout = 0;
 static int conon = 0;
@@ -123,7 +105,6 @@ int sockfd;
 int serhandle;
 struct List *olms;
 
-static struct termios oldtty;
 static struct sockaddr_un sock;
 
 /**
@@ -131,10 +112,8 @@ static struct sockaddr_un sock;
  */
 static void create_internode_socket()
 {
-
     char socket_name[4096] = {0};
-    if ((sockfd = socket(AF_UNIX, SOCK_DGRAM, 0)) < 0)
-    {
+    if ((sockfd = socket(AF_UNIX, SOCK_DGRAM, 0)) < 0) {
         fprintf(stderr,"%s ***cannot create communication socket, check permissions!",ENTHRALTMP);
     }
     snprintf(socket_name, sizeof socket_name, "%s/enthral_sock%d", ENTHRALTMP, NODE_NUM);
@@ -143,8 +122,7 @@ static void create_internode_socket()
     strncpy(sock.sun_path, socket_name, sizeof sock.sun_path);
     sock.sun_path[sizeof sock.sun_path - 1] = 0;
     sock.sun_family = AF_UNIX;
-    if (bind(sockfd, (struct sockaddr *) &sock, sizeof sock) < 0)
-    {
+    if (bind(sockfd, (struct sockaddr *) &sock, sizeof sock) < 0) {
         fprintf(stderr,"%s ***cannot bind communication socket, check permissions!",ENTHRALTMP);
         close(sockfd);
     }
@@ -155,7 +133,6 @@ static void create_internode_socket()
  */
 void clear_nodes()
 {
-
     char buff[512] = {0};
 
     finalize_console();
@@ -172,26 +149,20 @@ void clear_nodes()
     // Clear Terminal file from Telnetd
     snprintf(buff, sizeof(buff), "%s", CLIENT_TERM);
     remove(buff);
-
 }
-
 
 /**
  * Initalize And Create Node Sockets
  */
 int init_nodes()
 {
-
     serhandle = open(ttyname(0), O_RDWR);
 
-    // Create communication fifos for Snoop
     create_internode_socket();
-    if (init_console() == -1)
-    {
+    if (init_console() == -1) {
         fprintf(stderr,"%s ***communication socket(s) failed to init, check permissions!",ENTHRALTMP);
     }
 
-    //atexit(clear_nodes);
     return 1;
 }
 
@@ -200,7 +171,6 @@ int init_nodes()
  */
 int set_blocking_mode(int fd, int mode)
 {
-
     int fl;
     if ((fl = fcntl(fd, F_GETFL)) == -1)
         return -1;
@@ -213,16 +183,13 @@ int set_blocking_mode(int fd, int mode)
  */
 ssize_t safe_read(int fd, void *buf, size_t buflen)
 {
-
     char *p;
     ssize_t bread, n;
 
     bread = 0;
     p = (char *) buf;
-    while (buflen)
-    {
-        if ((n = read(fd, p, buflen)) == -1)
-        {
+    while (buflen) {
+        if ((n = read(fd, p, buflen)) == -1) {
             if (errno == EINTR)
                 continue;
             return -1;
@@ -240,16 +207,13 @@ ssize_t safe_read(int fd, void *buf, size_t buflen)
  */
 ssize_t safe_write(int fd, const void *buf, size_t buflen)
 {
-
     char *p;
     ssize_t bwrite, n;
 
     bwrite = 0;
     p = (char *) buf;
-    while (buflen)
-    {
-        if ((n = write(fd, p, buflen)) == -1)
-        {
+    while (buflen) {
+        if ((n = write(fd, p, buflen)) == -1) {
             if (errno == EINTR)
                 continue;
             return -1;
@@ -275,7 +239,6 @@ int console_active()
  */
 int init_console()
 {
-
     char buffer[4096] = {0};
     struct sigaction sigact;
     sigset_t sigset;
@@ -292,9 +255,7 @@ int init_console()
 
     snprintf(buffer, sizeof buffer, "%s/enthral%dw", ENTHRALTMP, NODE_NUM);
     unlink(buffer);
-    if (mkfifo(buffer, 0777) == -1)
-    {
-        //syslog(LOG_ERR, "cannot mkfifo(\"%.200s\"): %m", buffer);
+    if (mkfifo(buffer, 0777) == -1) {
         fprintf(stderr,"%s Cannot create communication FIFO\r\n",ENTHRALTMP);
         exit(1);
     }
@@ -307,7 +268,7 @@ int init_console()
      * side of pipe, since safe_write() will return EPIPE on such case.
      */
     if ((dummyfd = open(buffer, O_RDONLY | O_NONBLOCK)) == -1 ||
-            (conout = open(buffer, O_WRONLY | O_NONBLOCK)) == -1)
+        (conout = open(buffer, O_WRONLY | O_NONBLOCK)) == -1)
         abort();
 
     close(dummyfd);
@@ -315,8 +276,7 @@ int init_console()
 
     snprintf(buffer, sizeof(buffer), "%s/enthral%dr", ENTHRALTMP, NODE_NUM);
     unlink(buffer);
-    if (mkfifo(buffer, 0777) == -1)
-    {
+    if (mkfifo(buffer, 0777) == -1) {
         fprintf(stderr,"%s ***cannot create communication FIFO socket (Nodes), check permissions!",ENTHRALTMP);
         exit(1);
     }
@@ -325,7 +285,7 @@ int init_console()
      * work on all systems.
      */
     if ((conin = open(buffer, O_RDONLY | O_NONBLOCK)) == -1 ||
-            (dummyfd = open(buffer, O_WRONLY | O_NONBLOCK)) == -1)
+        (dummyfd = open(buffer, O_WRONLY | O_NONBLOCK)) == -1)
         abort();
 
     set_blocking_mode(conin, 0);
@@ -349,7 +309,6 @@ void finalize_console()
  */
 void open_console()
 {
-
     if (conon != 2)
         conon = 1;
 }
@@ -359,7 +318,6 @@ void open_console()
  */
 void close_console()
 {
-
     if (conon != 2)
         conon = 0;
 }
@@ -369,7 +327,6 @@ void close_console()
  */
 int console_select_input(int maxfd, fd_set *set)
 {
-
     FD_SET(conin, set);
     return maxfd < conin ? conin : maxfd;
 }
@@ -388,13 +345,11 @@ int console_pending_input(fd_set *set)
 int console_getc(void)
 {
     char ch;
-    switch (read(conin, &ch, 1))
-    {
+    switch (read(conin, &ch, 1)) {
     case 0:
         return EOF;
     case -1:
-        if (errno == EPIPE)
-        {
+        if (errno == EPIPE) {
             conon = 0;
             return EOF;
         }
@@ -404,7 +359,6 @@ int console_getc(void)
     }
 }
 
-
 /**
  * Used for printing multibyte (UTF-8) Characters
  * To Console / STDOUT
@@ -412,23 +366,20 @@ int console_getc(void)
 void print_wide(const std::wstring& wstr)
 {
     std::mbstate_t state = std::mbstate_t();
-for(wchar_t wc : wstr)
-    {
+    for(wchar_t wc : wstr) {
         std::string mb(MB_CUR_MAX, '\0');
         int ret = std::wcrtomb(&mb[0], wc, &state);
-        if ((ret == 0) || (ret > MB_CUR_MAX))
+        if ((ret == 0))
             break;
 
         // Skip any Trailing / Embedded null from Wide -> multibtye
         // Conversion, don't send NULL's to the screen.
-for(char ch: mb)
-        {
+        for(char ch: mb) {
             if (ch != '\0')
                 std::cout << ch << flush;
         }
     }
 }
-
 
 /**
  * Main Translation loop from cp437 to Wide Unicode.
@@ -440,17 +391,15 @@ void cp437toUTF8(std::string cp347)
     int ascii_value = 0;
 
     // Loop and wirte out after translation to UTF-8
-    for (int i = 0; i < (signed)cp347.size(); i++)
-    {
+    for (int i = 0; i < (signed)cp347.size(); i++) {
         ascii_value = std::char_traits<char>().to_int_type(cp347[i]);
         if (ascii_value < 256)
             wstr = CP437TABLE[ascii_value];
         else
             wstr = cp347[i];
-        print_wide(wstr); // Normal UTF8 Output
+        print_wide(wstr);
     }
 }
-
 
 /**
  * Main call to write output to console
@@ -460,38 +409,25 @@ int console_putsn(char *str, size_t n, int buffering)
 {
     int writecnt = 0;
 
-    /*
-     * New UTF8- Translation Code Here.
-     * If UTF8 is Active, translate all output to Unicode
-     * And Use Wide Char Array and Output function for local display only
-     * Node Spy should do this also!
-     */
-
     std::string::size_type id1 = 0;
     std::string myCP437;
     myCP437 = static_cast<char *>(str);
 
     // Find Most Recent Screen Clear, Restart buffer fresh
     // Otherwise Keep appending to the buffer
-    if (buffering)
-    {
+    if (buffering) {
         id1 = myCP437.rfind("\x1b[2J",myCP437.size()-1);
-        if (id1 != std::string::npos)
-        {
+        if (id1 != std::string::npos) {
             screen_buffer.erase();
             screen_buffer = myCP437.substr(id1);
-        }
-        else
+        } else
             screen_buffer += myCP437;
     }
 
 
-    if (UTF8Output)
-    {
+    if (UTF8Output) {
         cp437toUTF8(myCP437);
-    }
-    else
-    {
+    } else {
         // Write to console first for Telnet Users Connection
         writecnt = write(1,(char*)str,n); //- - Normal Output for Connection.
     }
@@ -499,12 +435,9 @@ int console_putsn(char *str, size_t n, int buffering)
     // Safe Write to Sockets for Snooping IPC Connections locally.
     // - Local connection For snoop sysop utils.
     writecnt = safe_write(conout, str, n);
-    if (writecnt == -1 && errno == EPIPE)
-    {
+    if (writecnt == -1 && errno == EPIPE) {
         return 0;
-    }
-    else
-    {
+    } else {
         return writecnt;
     }
 }
